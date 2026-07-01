@@ -2210,6 +2210,10 @@ a.card:hover {
   background: var(--bg-elev);
 }
 
+.focus-numbered__item:last-child {
+  border-bottom: 0;
+}
+
 .focus-numbered__num {
   font-family: var(--font-sans);
   font-size: var(--fs-2xl);
