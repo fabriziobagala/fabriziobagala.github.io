@@ -78,6 +78,12 @@ stack:
           - "GitHub Copilot"
           - "Postman"
           - "Visual Studio"
+      - label: "Web & frontend"
+        items:
+          - "HTML5"
+          - "CSS3"
+          - "JavaScript"
+          - "Hugo"
       - label: "Data & infrastructure"
         items:
           - "MySQL"
