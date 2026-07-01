@@ -8,6 +8,9 @@ disableKinds = []
 summaryLength = 30
 enableGitInfo = true
 
+[frontmatter]
+  lastmod = ['lastmod', 'date']
+
 [taxonomies]
   tag = "tags"
 
