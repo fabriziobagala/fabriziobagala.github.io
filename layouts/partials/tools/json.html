@@ -1,0 +1,45 @@
+<div class="tool-studio tool-studio--split">
+  <div class="tool-studio__actions" role="toolbar" aria-label="{{ i18n "tools_options" }}">
+    <div class="toolbar-group toolbar-group--options">
+      <div class="field field--inline" data-tooltip="{{ i18n "tools_json_indent_hint" }}">
+        <label for="json-indent" class="field__label">{{ i18n "tools_indent" }}</label>
+        <input id="json-indent" type="number" min="1" max="10" value="2" class="input input--sm">
+      </div>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_json_minify_hint" }}"><input id="json-minify" type="checkbox" aria-describedby="json-minify-hint"><span>{{ i18n "tools_minify" }}</span></label><span id="json-minify-hint" class="sr-only">{{ i18n "tools_json_minify_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_json_sort_keys_hint" }}"><input id="json-sort-keys" type="checkbox" aria-describedby="json-sort-keys-hint"><span>{{ i18n "tools_sort_keys" }}</span></label><span id="json-sort-keys-hint" class="sr-only">{{ i18n "tools_json_sort_keys_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_json_escape_unicode_hint" }}"><input id="json-escape-unicode" type="checkbox" aria-describedby="json-escape-unicode-hint"><span>{{ i18n "tools_escape_unicode" }}</span></label><span id="json-escape-unicode-hint" class="sr-only">{{ i18n "tools_json_escape_unicode_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_json_remove_null_hint" }}"><input id="json-remove-null" type="checkbox" aria-describedby="json-remove-null-hint"><span>{{ i18n "tools_remove_null" }}</span></label><span id="json-remove-null-hint" class="sr-only">{{ i18n "tools_json_remove_null_hint" }}</span>
+    </div>
+
+    <div class="toolbar-group toolbar-group--end">
+      <button id="json-clear-btn" class="toolbar-btn toolbar-btn--ghost" type="button" data-tooltip="{{ i18n "tools_clear_hint" }}">
+        {{ partial "icon.html" "x-circle" }}<span>{{ i18n "tools_clear" }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tool-studio__grid">
+    <section class="tool-studio__pane" aria-labelledby="json-in-label">
+      <div class="tool-studio__pane-head">
+        <span id="json-in-label" class="tool-studio__pane-title">{{ i18n "tools_input" }}</span>
+        <output id="json-validity" class="tool-studio__validity" aria-live="polite" data-state="empty"></output>
+      </div>
+      {{- partial "textarea-numbered.html" (dict "id" "json-input" "labelledby" "json-in-label" "placeholder" `{"hello": "world"}`) -}}
+    </section>
+
+    <section class="tool-studio__pane" aria-labelledby="json-out-label">
+      <div class="tool-studio__pane-head">
+        <span id="json-out-label" class="tool-studio__pane-title">{{ i18n "tools_output" }}</span>
+        <fieldset class="tool-studio__views">
+          <legend class="sr-only">{{ i18n "tools_output" }}</legend>
+          <button class="tool-studio__view-btn is-active" type="button" aria-pressed="true" data-view="json">{{ i18n "tools_view_json" }}</button>
+          <button class="tool-studio__view-btn" type="button" aria-pressed="false" data-view="yaml">{{ i18n "tools_view_yaml" }}</button>
+          <button class="tool-studio__view-btn" type="button" aria-pressed="false" data-view="xml">{{ i18n "tools_view_xml" }}</button>
+          <button class="tool-studio__view-btn" type="button" aria-pressed="false" data-view="csv">{{ i18n "tools_view_csv" }}</button>
+        </fieldset>
+        {{- partial "tools/tool-copy.html" (dict "target" "json-output" "labelledby" "json-out-label") -}}
+      </div>
+      {{- partial "textarea-numbered.html" (dict "id" "json-output" "labelledby" "json-out-label" "readonly" true) -}}
+    </section>
+  </div>
+</div>

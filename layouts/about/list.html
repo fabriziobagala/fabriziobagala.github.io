@@ -1,0 +1,187 @@
+{{ define "main" }}
+<div class="container about-page">
+  <header class="page-header">
+    {{- $eyebrowKey := printf "eyebrow_%s" .Section -}}
+    {{- $eyebrow := i18n $eyebrowKey -}}
+    <p class="page-header__eyebrow">{{ if $eyebrow }}{{ $eyebrow }}{{ else }}{{ .Section }}{{ end }}</p>
+    <h1 class="page-header__title">{{ .Title }}</h1>
+    {{- with .Description -}}<p class="page-header__subtitle">{{ . }}</p>{{- end -}}
+  </header>
+
+  <section class="about-intro">
+    {{- with (resources.Match "images/profile.*") -}}
+      {{- $img := (index . 0).Resize "x520 webp q85" -}}
+      <div class="about-avatar">
+        <img src="{{ $img.RelPermalink }}"
+             alt="{{ site.Params.author }}"
+             width="{{ $img.Width }}" height="{{ $img.Height }}"
+             loading="eager"
+             fetchpriority="high"
+             decoding="async">
+      </div>
+    {{- end -}}
+    <div class="about-intro__body">
+      {{- with .Params.tagline -}}
+        <p class="about-intro__role">{{ . }}</p>
+      {{- end -}}
+      <h2 class="about-intro__name">{{ site.Params.author }}</h2>
+      {{- with .Params.intro -}}
+        <p class="about-intro__lead">{{ . }}</p>
+      {{- end -}}
+      {{- with .Params.summary -}}
+        <p class="about-intro__lead">{{ . }}</p>
+      {{- end -}}
+      {{- $startYear := site.Params.career_start_year | default 2017 -}}
+      {{- $years := sub now.Year $startYear -}}
+      {{- $yearsLabel := cond (ge $years 11) "10+" (printf "%d" $years) -}}
+      {{- $articles := len (where site.RegularPages "Section" "blog") -}}
+      {{- $tools := len (where site.RegularPages "Section" "tools") -}}
+      <dl class="about-stats">
+        <div class="about-stats__item">
+          <dt class="about-stats__label">{{ i18n "about_stat_years" }}</dt>
+          <dd class="about-stats__value">{{ $yearsLabel }}</dd>
+        </div>
+        <div class="about-stats__item">
+          <dt class="about-stats__label">{{ i18n "about_stat_articles" }}</dt>
+          <dd class="about-stats__value">{{ $articles }}</dd>
+        </div>
+        <div class="about-stats__item">
+          <dt class="about-stats__label">{{ i18n "about_stat_tools" }}</dt>
+          <dd class="about-stats__value">{{ $tools }}</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  {{- with .Params.featured -}}
+    <section class="about-section">
+      <header class="about-section__header">
+        <h2 class="about-section__title">{{ .title }}</h2>
+        {{- with .intro -}}<p class="about-section__sub">{{ . }}</p>{{- end -}}
+      </header>
+      <div class="featured-cards">
+        {{- range .items -}}
+          <article class="featured-card">
+            <header class="featured-card__head">
+              <span class="featured-card__icon">{{- partial "icon.html" (.icon | default "code") -}}</span>
+              <div>
+                <h3 class="featured-card__name">{{ .name }}</h3>
+                {{- with .role -}}<p class="featured-card__role">{{ . }}</p>{{- end -}}
+              </div>
+            </header>
+            {{- with .desc -}}<p class="featured-card__desc">{{ . }}</p>{{- end -}}
+            {{- with .tags -}}
+              <ul class="featured-card__tags">
+                {{- range . -}}<li>{{ . }}</li>{{- end -}}
+              </ul>
+            {{- end -}}
+          </article>
+        {{- end -}}
+      </div>
+    </section>
+  {{- end -}}
+
+  {{- with .Params.stack -}}
+    <section class="about-section">
+      <header class="about-section__header">
+        <h2 class="about-section__title">{{ .title }}</h2>
+        {{- with .subtitle -}}<p class="about-section__sub">{{ . }}</p>{{- end -}}
+      </header>
+      <div class="stack-grid">
+        {{- range .items -}}
+          <div class="stack-tile"{{ with .color }} style="--brand: {{ . }}"{{ end }}>
+            <span class="stack-tile__icon">{{- partial "icon.html" (.icon | default "code") -}}</span>
+            <div class="stack-tile__body">
+              <h3 class="stack-tile__name">{{ .name }}</h3>
+              {{- with .desc -}}<p class="stack-tile__desc">{{ . }}</p>{{- end -}}
+            </div>
+          </div>
+        {{- end -}}
+        {{- with .more -}}
+          <button type="button" class="stack-tile stack-tile--more" data-stack-more-trigger aria-haspopup="dialog" aria-expanded="false" aria-controls="stack-more-popover">
+            <span class="stack-tile__icon">{{- partial "icon.html" (.icon | default "ellipsis") -}}</span>
+            <span class="stack-tile__body">
+              <span class="stack-tile__name">{{ .name }}</span>
+              {{- with .desc -}}<span class="stack-tile__desc">{{ . }}</span>{{- end -}}
+            </span>
+          </button>
+        {{- end -}}
+      </div>
+      {{- with .more -}}
+        <dialog class="stack-popover" id="stack-more-popover" data-stack-more-popover aria-labelledby="stack-more-popover-title">
+          <div class="stack-popover__panel">
+            <header class="stack-popover__header">
+              <div>
+                <h2 id="stack-more-popover-title" class="stack-popover__title">{{ .popover_title }}</h2>
+                {{- with .popover_subtitle -}}<p class="stack-popover__sub">{{ . }}</p>{{- end -}}
+              </div>
+              <button type="button" class="stack-popover__close" data-stack-more-close>
+                {{- partial "icon.html" "x-circle" -}}
+                <span class="sr-only">{{ i18n "stack_more_close" }}</span>
+              </button>
+            </header>
+            {{- if .groups -}}
+              <div class="stack-popover__tabs" role="tablist" aria-label="{{ i18n "stack_more_tablist" }}">
+                {{- range $i, $g := .groups -}}
+                  <button type="button"
+                          role="tab"
+                          id="stack-tab-{{ $i }}"
+                          class="stack-popover__tab"
+                          aria-controls="stack-tabpanel-{{ $i }}"
+                          aria-selected="{{ if eq $i 0 }}true{{ else }}false{{ end }}"
+                          tabindex="{{ if eq $i 0 }}0{{ else }}-1{{ end }}">
+                    {{ $g.label }}
+                  </button>
+                {{- end -}}
+              </div>
+              {{- range $i, $g := .groups -}}
+                <ul class="stack-popover__list"
+                    role="tabpanel"
+                    id="stack-tabpanel-{{ $i }}"
+                    aria-labelledby="stack-tab-{{ $i }}"
+                    {{ if ne $i 0 }}hidden{{ end }}>
+                  {{- range $g.items -}}
+                    <li class="stack-popover__chip">{{ . }}</li>
+                  {{- end -}}
+                </ul>
+              {{- end -}}
+            {{- else -}}
+              <ul class="stack-popover__list">
+                {{- range .items -}}
+                  <li class="stack-popover__chip">{{ . }}</li>
+                {{- end -}}
+              </ul>
+            {{- end -}}
+          </div>
+        </dialog>
+      {{- end -}}
+    </section>
+  {{- end -}}
+
+  {{- with .Params.focus -}}
+    <section class="about-section">
+      <header class="about-section__header">
+        <h2 class="about-section__title">{{ .title }}</h2>
+        {{- with .subtitle -}}<p class="about-section__sub">{{ . }}</p>{{- end -}}
+      </header>
+
+      <ol class="focus-numbered">
+        {{- range $i, $it := .items -}}
+          <li class="focus-numbered__item">
+            <span class="focus-numbered__num">{{ printf "%02d" (add $i 1) }}</span>
+            <div class="focus-numbered__body">
+              <h3 class="focus-numbered__title">{{ $it.title }}</h3>
+              <p class="focus-numbered__desc">{{ $it.desc }}</p>
+            </div>
+            <span class="focus-numbered__icon">{{- partial "icon.html" ($it.icon | default "code") -}}</span>
+          </li>
+        {{- end -}}
+      </ol>
+    </section>
+  {{- end -}}
+
+  {{- with .Content -}}
+    <div class="post__content">{{ . }}</div>
+  {{- end -}}
+</div>
+{{ end }}

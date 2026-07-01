@@ -1,0 +1,24 @@
+{{- $src := .Destination -}}
+{{- $alt := .Text | plainify -}}
+{{- $caption := .Title -}}
+
+{{- $img := false -}}
+{{- if not (strings.Contains $src "://") -}}
+  {{- $img = or (.PageInner.Resources.GetMatch $src) (resources.Get $src) -}}
+{{- end -}}
+{{- $width := "" -}}
+{{- $height := "" -}}
+{{- with $img }}{{ $width = .Width }}{{ $height = .Height }}{{ end -}}
+{{- with .Attributes.width }}{{ $width = . }}{{ end -}}
+{{- with .Attributes.height }}{{ $height = . }}{{ end -}}
+<figure class="post-figure">
+  <img src="{{ $src }}"
+       alt="{{ $alt }}"
+       {{- with $width }} width="{{ . }}"{{ end }}
+       {{- with $height }} height="{{ . }}"{{ end }}
+       {{- if gt .Ordinal 0 }} loading="lazy"{{ end }}
+       decoding="async">
+  {{- with $caption -}}
+    <figcaption>{{ . }}</figcaption>
+  {{- end -}}
+</figure>

@@ -1,0 +1,90 @@
+{{- $p := .prefix -}}
+{{- $mode := .mode -}}
+{{- $fields := slice
+  (dict "key" "name"    "id" "name"    "icon" "person-fill"  "type" "text"     "label" "contact_field_name"    "ph" "contact_field_name_ph"    "autocomplete" "name"  "row" true)
+  (dict "key" "email"   "id" "email"   "icon" "envelope-fill" "type" "email"   "label" "contact_field_email"   "ph" "contact_field_email_ph"   "autocomplete" "email" "row" true)
+  (dict "key" "subject" "id" "subject" "icon" "tag"          "type" "text"     "label" "contact_field_subject" "ph" "contact_field_subject_ph" "autocomplete" "off"   "row" false)
+  (dict "key" "message" "id" "message" "icon" "comment-dots" "type" "textarea" "label" "contact_field_message" "ph" "contact_field_message_ph" "autocomplete" "off"   "row" false)
+-}}
+<div class="contact-pane" data-contact-pane>
+<form class="contact-form contact-form--icon-{{ $mode }}"
+      action="https://api.web3forms.com/submit"
+      method="POST"
+      novalidate
+      data-contact-form
+      data-max-message="2000"
+      data-i18n-required="{{ i18n "contact_form_err_required" }}"
+      data-i18n-email="{{ i18n "contact_form_err_email" }}">
+  <input type="hidden" name="access_key" value="{{ site.Params.web3forms_access_key }}">
+  <input type="hidden" name="from_name" value="{{ site.Params.author }}">
+
+  <input type="checkbox" name="botcheck" class="contact-form__botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" aria-label="Leave this field empty">
+  <div class="contact-form__row">
+    {{- range $fields }}{{ if .row }}
+    {{- $fid := printf "cf-%s-%s" $p .id }}
+    <div class="field">
+      <label class="field__label" for="{{ $fid }}">
+        {{- if eq $mode "label" }}<span class="field__label-icon">{{ partial "icon.html" .icon }}</span>{{ end }}{{ i18n .label }}
+      </label>
+      <div class="field__control">
+        {{- if eq $mode "inset" }}<span class="field__icon">{{ partial "icon.html" .icon }}</span>{{ end }}
+        <input class="field__input{{ if eq $mode "inset" }} field__input--has-icon{{ end }}"
+               id="{{ $fid }}" name="{{ .key }}" type="{{ .type }}"
+               {{ if eq .autocomplete "name" }}autocomplete="name"{{ else if eq .autocomplete "email" }}autocomplete="email"{{ else }}autocomplete="off"{{ end }}{{ if eq .type "email" }} inputmode="email"{{ end }} required
+               aria-describedby="{{ $fid }}-err"
+               placeholder="{{ i18n .ph }}">
+      </div>
+      <p class="field__error" id="{{ $fid }}-err" data-field-error hidden></p>
+    </div>
+    {{- end }}{{ end }}
+  </div>
+  {{- range $fields }}{{ if not .row }}
+  {{- $fid := printf "cf-%s-%s" $p .id }}
+  <div class="field">
+    <label class="field__label" for="{{ $fid }}">
+      {{- if eq $mode "label" }}<span class="field__label-icon">{{ partial "icon.html" .icon }}</span>{{ end }}{{ i18n .label }}
+    </label>
+    <div class="field__control">
+      {{- if eq $mode "inset" }}<span class="field__icon field__icon--top">{{ partial "icon.html" .icon }}</span>{{ end }}
+      {{- if eq .type "textarea" }}
+      <textarea class="field__input field__input--textarea{{ if eq $mode "inset" }} field__input--has-icon{{ end }}"
+                id="{{ $fid }}" name="{{ .key }}" rows="6" required
+                aria-describedby="{{ $fid }}-err"
+                placeholder="{{ i18n .ph }}"></textarea>
+      {{- else }}
+      <input class="field__input{{ if eq $mode "inset" }} field__input--has-icon{{ end }}"
+             id="{{ $fid }}" name="{{ .key }}" type="{{ .type }}"
+             {{ if eq .autocomplete "name" }}autocomplete="name"{{ else if eq .autocomplete "email" }}autocomplete="email"{{ else }}autocomplete="off"{{ end }} required
+             aria-describedby="{{ $fid }}-err"
+             placeholder="{{ i18n .ph }}">
+      {{- end }}
+    </div>
+    <p class="field__error" id="{{ $fid }}-err" data-field-error hidden></p>
+  </div>
+  {{- end }}{{ end }}
+  <div class="contact-form__foot">
+    <button class="btn btn--primary" type="submit" data-tooltip="{{ i18n "contact_form_note" }}">
+      <span class="btn__icon">{{- partial "icon.html" "send" -}}</span>
+      <span class="btn__label">{{ i18n "contact_form_send" }}</span>
+    </button>
+  </div>
+</form>
+<output class="contact-result contact-result--success" data-contact-result="success" hidden>
+  <span class="contact-result__badge">{{- partial "icon.html" "envelope-circle-check" -}}</span>
+  <h3 class="contact-result__title">{{ i18n "contact_form_success_title" }}</h3>
+  <p class="contact-result__text">{{ i18n "contact_form_success" }}</p>
+  <button class="contact-result__again" type="button" data-contact-reset>
+    <span class="contact-result__again-icon">{{- partial "icon.html" "send" -}}</span>
+    {{ i18n "contact_form_again" }}
+  </button>
+</output>
+<div class="contact-result contact-result--error" data-contact-result="error" role="alert" hidden>
+  <span class="contact-result__badge">{{- partial "icon.html" "x-circle" -}}</span>
+  <h3 class="contact-result__title">{{ i18n "contact_form_error_title" }}</h3>
+  <p class="contact-result__text">{{ i18n "contact_form_error" }}</p>
+  <button class="contact-result__again" type="button" data-contact-reset>
+    <span class="contact-result__again-icon">{{- partial "icon.html" "send" -}}</span>
+    {{ i18n "contact_form_try_again" }}
+  </button>
+</div>
+</div>

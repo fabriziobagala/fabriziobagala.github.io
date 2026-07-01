@@ -1,0 +1,17 @@
+{{- $lastmod := .Lastmod -}}
+{{- $showLastmod := and (not $lastmod.IsZero) (gt ($lastmod.Sub .Date).Hours 24.0) -}}
+<span class="post__meta-item">
+  {{- partial "icon.html" "calendar" -}}
+  <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time>
+</span>
+{{- if $showLastmod -}}
+  <span class="post__meta-item post__meta-item--subtle" title="{{ i18n "blog_updated" }}">
+    {{- partial "icon.html" "rotate" -}}
+    <span class="sr-only">{{ i18n "blog_updated" }}: </span>
+    <time datetime="{{ $lastmod.Format "2006-01-02" }}">{{ $lastmod | time.Format ":date_long" }}</time>
+  </span>
+{{- end -}}
+<span class="post__meta-item">
+  {{- partial "icon.html" "clock" -}}
+  <span>{{ partial "reading-time.html" . }} {{ i18n "blog_minutes_read" }}</span>
+</span>

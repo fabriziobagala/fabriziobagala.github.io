@@ -1,0 +1,238 @@
+{{- $is404 := eq .Kind "404" -}}
+{{- $pageTitle := partial "page-title.html" . -}}
+{{- $description := "" -}}
+{{- if $is404 -}}
+  {{- $description = i18n "notfound_subtitle" -}}
+{{- else if eq .Kind "term" -}}
+  {{- $description = i18n "tags_meta_description" (dict "term" (partial "term-title.html" .Title)) -}}
+{{- else if eq .Kind "taxonomy" -}}
+  {{- $description = i18n "tags_subtitle" -}}
+{{- else -}}
+  {{- $description = .Description | default site.Params.description -}}
+{{- end -}}
+{{- $isArticle := and .IsPage (eq .Section "blog") -}}
+{{- $canonical := .Permalink -}}
+{{- if or (and (eq .Kind "section") (eq .Section "blog")) (eq .Kind "term") -}}
+  {{- $canonical = .Paginator.URL | absURL -}}
+{{- end -}}
+
+{{- $themeRes := `(function(){try{var t=localStorage.getItem('fb-theme');var p=(t==='light'||t==='dark')?t:null;if(p)document.documentElement.dataset.theme=p;var eff=p||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var c=document.querySelector('meta[name=color-scheme]');if(c)c.content=p||'dark light';var m=document.querySelector('meta[name=theme-color]');if(m)m.content=(eff==='dark')?'#0a0e14':'#ffffff';}catch(err){console.debug('theme bootstrap skipped:',err);}})();` | resources.FromString "csp/theme.js" | resources.Minify -}}
+{{- $themeJS := $themeRes.Content -}}
+{{- $themeHash := ($themeRes | resources.Fingerprint "sha256").Data.Integrity -}}
+{{- $toolsRes := `globalThis.toolsI18n=JSON.parse(document.getElementById('tools-i18n').textContent);` | resources.FromString "csp/tools-i18n.js" | resources.Minify -}}
+{{- $toolsJS := $toolsRes.Content -}}
+{{- $toolsHash := ($toolsRes | resources.Fingerprint "sha256").Data.Integrity -}}
+{{- $scriptSrc := printf "'self' '%s' '%s'" $themeHash $toolsHash -}}
+{{- if hugo.IsServer -}}{{- $scriptSrc = "'self' 'unsafe-inline'" -}}{{- end -}}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+
+<meta name="theme-color" content="#0a0e14">
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src {{ $scriptSrc }}; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.web3forms.com; frame-src https://www.youtube-nocookie.com; form-action 'self'; manifest-src 'self'">
+
+<meta name="description" content="{{ $description }}">
+<meta name="author" content="{{ site.Params.author }}">
+
+<link rel="canonical" href="{{ $canonical }}">
+
+<link rel="alternate" type="application/rss+xml" href="{{ "/blog/index.xml" | absURL }}" title="{{ site.Title }} - Blog RSS">
+
+{{- $ogImage := "" -}}
+{{- $ogIsDefault := false -}}
+{{- with .Params.image -}}
+  {{- $ogImage = . | absURL -}}
+{{- else -}}
+  {{- $ogDefault := resources.Get "images/social.png" -}}
+  {{- $ogImage = ($ogDefault | resources.Fingerprint).Permalink -}}
+  {{- $ogIsDefault = true -}}
+{{- end -}}
+{{- $ogImageAlt := $pageTitle -}}
+{{- if .IsHome -}}
+  {{- $ogImageAlt = printf "%s - %s" site.Title (site.Params.jobTitle | default "Senior .NET Developer") -}}
+{{- end -}}
+
+<meta property="og:title" content="{{ $pageTitle }}">
+<meta property="og:description" content="{{ $description }}">
+<meta property="og:type" content="{{ cond $isArticle "article" "website" }}">
+<meta property="og:locale" content="{{ site.Params.locale }}">
+<meta property="og:url" content="{{ $canonical }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:image" content="{{ $ogImage }}">
+{{- if $ogIsDefault }}
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+{{- end }}
+<meta property="og:image:alt" content="{{ $ogImageAlt }}">
+
+{{- if $isArticle -}}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- if not .Lastmod.IsZero -}}
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end -}}
+<meta property="article:author" content="{{ site.Params.author }}">
+{{- with .Params.tags -}}
+{{- range . -}}<meta property="article:tag" content="{{ . }}">{{- end -}}
+{{- end -}}
+{{- end -}}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $pageTitle }}">
+<meta name="twitter:description" content="{{ $description }}">
+<meta name="twitter:image" content="{{ $ogImage }}">
+<meta name="twitter:image:alt" content="{{ $ogImageAlt }}">
+
+{{- $personLd := dict
+  "@context" "https://schema.org"
+  "@type" "Person"
+  "name" site.Params.author
+  "jobTitle" (site.Params.jobTitle | default "Senior .NET Developer")
+  "url" site.BaseURL
+  "sameAs" (slice site.Params.linkedin site.Params.github site.Params.microsoftlearn)
+-}}
+{{- if site.Params.location -}}
+  {{- $personLd = merge $personLd (dict "address" (dict "@type" "PostalAddress" "addressCountry" (site.Params.countryCode | default site.Params.location))) -}}
+{{- end -}}
+
+{{- $websiteLd := dict
+  "@context" "https://schema.org"
+  "@type" "WebSite"
+  "name" site.Title
+  "url" site.BaseURL
+  "description" site.Params.description
+  "inLanguage" "en-US"
+  "author" (dict "@type" "Person" "name" site.Params.author "url" site.BaseURL)
+-}}
+
+{{- if .IsHome -}}
+<script type="application/ld+json">{{ $personLd | jsonify (dict "indent" "  ") | safeJS }}</script>
+<script type="application/ld+json">{{ $websiteLd | jsonify (dict "indent" "  ") | safeJS }}</script>
+{{- else if $isArticle -}}
+  {{- $articleLd := dict
+    "@context" "https://schema.org"
+    "@type" "BlogPosting"
+    "headline" .Title
+    "description" $description
+    "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+    "dateModified" (cond .Lastmod.IsZero (.Date.Format "2006-01-02T15:04:05Z07:00") (.Lastmod.Format "2006-01-02T15:04:05Z07:00"))
+    "author" (dict "@type" "Person" "name" site.Params.author "url" site.BaseURL)
+    "publisher" (dict "@type" "Person" "name" site.Params.author "url" site.BaseURL)
+    "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
+    "url" .Permalink
+    "image" $ogImage
+    "inLanguage" "en-US"
+    "wordCount" .WordCount
+  -}}
+<script type="application/ld+json">{{ $articleLd | jsonify (dict "indent" "  ") | safeJS }}</script>
+
+  {{- $articleCrumbs := slice
+    (dict "@type" "ListItem" "position" 1 "name" (title (i18n "eyebrow_home")) "item" site.BaseURL)
+    (dict "@type" "ListItem" "position" 2 "name" (title .Section) "item" (printf "%s%s/" site.BaseURL .Section))
+    (dict "@type" "ListItem" "position" 3 "name" .Title "item" .Permalink) -}}
+  {{- $articleCrumbLd := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $articleCrumbs -}}
+<script type="application/ld+json">{{ $articleCrumbLd | jsonify (dict "indent" "  ") | safeJS }}</script>
+{{- else if not $is404 -}}
+  {{- $items := slice (dict "@type" "ListItem" "position" 1 "name" (title (i18n "eyebrow_home")) "item" site.BaseURL) -}}
+  {{- $pos := 2 -}}
+  {{- if or (eq .Kind "term") (eq .Kind "taxonomy") -}}
+
+    {{- $items = $items | append (dict "@type" "ListItem" "position" $pos "name" (i18n "tags_title") "item" (printf "%stags/" site.BaseURL)) -}}
+    {{- if eq .Kind "term" -}}
+      {{- $items = $items | append (dict "@type" "ListItem" "position" (add $pos 1) "name" (partial "term-title.html" .Title) "item" .Permalink) -}}
+    {{- end -}}
+  {{- else if .Section -}}
+
+    {{- $sectionUrl := printf "%s%s/" site.BaseURL .Section -}}
+    {{- $items = $items | append (dict "@type" "ListItem" "position" $pos "name" (title .Section) "item" $sectionUrl) -}}
+    {{- if ne .Permalink $sectionUrl -}}
+      {{- $items = $items | append (dict "@type" "ListItem" "position" (add $pos 1) "name" .Title "item" .Permalink) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $breadcrumbLd := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $items -}}
+<script type="application/ld+json">{{ $breadcrumbLd | jsonify (dict "indent" "  ") | safeJS }}</script>
+{{- end -}}
+
+<script>{{ $themeJS | safeJS }}</script>
+
+{{- $main := resources.Get "css/main.css" -}}
+{{- $hasCode := and (eq .Section "blog") (eq .Kind "page") -}}
+{{- $isTool := .Params.tool -}}
+{{- $css := "" -}}
+{{- if $hasCode -}}
+  {{- $css = slice $main (resources.Get "css/syntax.css") | resources.Concat "css/bundle-code.css" | resources.Minify | resources.Fingerprint -}}
+{{- else if $isTool -}}
+  {{- $css = slice $main (resources.Get "css/tools.css") | resources.Concat "css/bundle-tool.css" | resources.Minify | resources.Fingerprint -}}
+{{- else if .IsHome -}}
+  {{- $css = slice $main (resources.Get "css/home.css") | resources.Concat "css/bundle-home.css" | resources.Minify | resources.Fingerprint -}}
+{{- else if and (eq .Section "portfolio") (eq .Kind "section") -}}
+  {{- $css = slice $main (resources.Get "css/portfolio.css") | resources.Concat "css/bundle-portfolio.css" | resources.Minify | resources.Fingerprint -}}
+{{- else -}}
+  {{- $css = $main | resources.Minify | resources.Fingerprint -}}
+{{- end -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- if and (eq .Section "portfolio") (eq .Kind "section") -}}
+  {{- $filterCSS := "" -}}
+  {{- range $c := .Params.categories -}}
+    {{- $slug := $c.name | urlize -}}
+    {{- $filterCSS = printf "%s#portfolio-showcase:has(#portfolio-filter-%s:checked) .portfolio-card:not([data-category=%q]),#portfolio-showcase:has(#portfolio-filter-%s:checked) .portfolio-coming:not([data-category=%q]){display:none}" $filterCSS $slug $c.name $slug $c.name -}}
+  {{- end -}}
+  {{- with $filterCSS }}<style>{{ . | safeCSS }}</style>{{ end -}}
+{{- end -}}
+
+{{- if .Params.math -}}
+  <link rel="stylesheet" href="{{ "/katex/katex.min.css" | relURL }}" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
+{{- end -}}
+
+{{- if .Params.tool -}}
+  {{- $toolsI18n := dict
+    "json" (dict
+      "error" (i18n "err_generic")
+      "validOk" (i18n "ok_valid_json")
+      "errorInvalid" (i18n "err_invalid_json")
+      "errorTooDeep" (i18n "err_json_too_deep")
+      "errorCsvShape" (i18n "err_csv_shape")
+      "errorYamlMissing" (i18n "err_yaml_missing"))
+    "xml" (dict
+      "error" (i18n "err_generic")
+      "errorInvalid" (i18n "err_invalid_xml")
+      "validOk" (i18n "ok_valid_xml"))
+    "base64Converter" (dict
+      "error" (i18n "err_generic")
+      "validOk" (i18n "ok_valid_b64")
+      "errorInvalid" (i18n "err_invalid_b64_short")
+      "labelText" (i18n "tools_text")
+      "labelBase64" (i18n "tools_base64"))
+    "uuidV4" (dict
+      "error" (i18n "err_generic")
+      "validOk" (i18n "ok_valid_uuid")
+      "errorInvalid" (i18n "err_invalid_uuid_short")
+      "errorInvalidUuid" (i18n "err_invalid_uuid"))
+    "textCompare" (dict
+      "error" (i18n "err_generic")
+      "errorEmptyTexts" (i18n "err_empty_texts")
+      "errorTooLarge" (i18n "err_texts_too_large")
+      "noChanges" (i18n "ok_no_changes")
+      "comparisonDone" (i18n "ok_comparison_done"))
+    "crypto" (dict
+      "error" (i18n "err_generic")
+      "verifyMatch" (i18n "tools_crypto_verify_match")
+      "verifyMismatch" (i18n "tools_crypto_verify_mismatch"))
+  -}}
+<script type="application/json" id="tools-i18n">{{ $toolsI18n | jsonify }}</script>
+<script>{{ $toolsJS | safeJS }}</script>
+{{- end -}}
+
+<link rel="icon" type="image/png" sizes="96x96" href="{{ "/favicon-96x96.png" | relURL }}">
+<link rel="icon" type="image/svg+xml" href="{{ "/favicon.svg" | relURL }}">
+<link rel="shortcut icon" href="{{ "/favicon.ico" | relURL }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ "/apple-touch-icon.png" | relURL }}">
+<link rel="manifest" href="{{ "/site.webmanifest" | relURL }}">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+{{- if $is404 -}}
+<meta name="robots" content="noindex, follow">
+{{- else -}}
+<meta name="robots" content="index, follow, max-image-preview:large">
+{{- end }}
+<meta name="generator" content="Hugo">

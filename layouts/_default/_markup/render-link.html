@@ -1,0 +1,2 @@
+{{- $isExternal := or (hasPrefix .Destination "http://") (hasPrefix .Destination "https://") -}}
+<a href="{{ .Destination }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $isExternal }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .Text | safeHTML }}{{ if $isExternal }}<span class="sr-only"> {{ i18n "link_new_tab" }}</span>{{ end }}</a>

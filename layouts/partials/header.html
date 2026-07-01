@@ -1,0 +1,69 @@
+<header class="site-header" data-site-header data-mobile-open="false">
+  <div class="container isle">
+    <div class="isle__bar">
+      <a href="{{ "/" | relLangURL }}" class="brand">
+        {{- with resources.Get "images/logo.svg" -}}
+          {{- $svg := .Content -}}
+          {{- $svg = replaceRE `(<svg\b[^>]*?)\s+width="[^"]*"` "$1" $svg -}}
+          {{- $svg = replaceRE `(<svg\b[^>]*?)\s+height="[^"]*"` "$1" $svg -}}
+          {{- $svg = replaceRE `^<svg\s` `<svg class="brand__logo" aria-hidden="true" focusable="false" ` $svg -}}
+          {{- $svg | safeHTML -}}
+        {{- end -}}
+        <span class="brand__name">Fabrizio Bagalà</span>
+      </a>
+
+      <nav class="nav" aria-label="{{ i18n "nav_primary" }}">
+
+        <span class="nav__indicator" data-nav-indicator aria-hidden="true"></span>
+        <ul id="primary-nav" class="nav__list" data-nav-list>
+          {{- $current := .RelPermalink -}}
+          {{- range site.Menus.main -}}
+            {{- if not .Parent -}}
+              {{- $menuURL := .URL | relLangURL -}}
+              {{- $isActive := or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) -}}
+              {{- if eq .Identifier "home" -}}
+                {{- $isActive = $.IsHome -}}
+              {{- else if and (not $isActive) (ne $menuURL "/") -}}
+                {{- if hasPrefix $current $menuURL -}}
+                  {{- $isActive = true -}}
+                {{- end -}}
+              {{- end -}}
+              <li class="nav__item">
+                {{- $icon := "" -}}
+                {{- if eq .Identifier "home" }}{{ $icon = "home" }}{{ end -}}
+                {{- if eq .Identifier "portfolio" }}{{ $icon = "briefcase" }}{{ end -}}
+                {{- if eq .Identifier "tools" }}{{ $icon = "tool" }}{{ end -}}
+                {{- if eq .Identifier "blog" }}{{ $icon = "blog" }}{{ end -}}
+                {{- if eq .Identifier "about" }}{{ $icon = "user-tie" }}{{ end -}}
+                {{- if eq .Identifier "contact" }}{{ $icon = "comments" }}{{ end -}}
+                <a href="{{ $menuURL }}" class="nav__link {{ if $isActive }}is-active{{ end }}"{{ if $isActive }} aria-current="page"{{ end }}>
+                  {{- with $icon -}}{{- partial "icon.html" . -}}{{- end -}}
+                  <span>{{ .Name }}</span>
+                </a>
+              </li>
+            {{- end -}}
+          {{- end -}}
+        </ul>
+      </nav>
+
+      <div class="nav__controls">
+        <button type="button" class="icon-btn theme-toggle" data-theme-toggle
+                data-tooltip="{{ i18n "nav_theme_light" }}"
+                data-label-light="{{ i18n "nav_theme_light" }}"
+                data-label-dark="{{ i18n "nav_theme_dark" }}">
+          {{- partial "icon.html" (dict "name" "sun" "class" "icon-sun") -}}
+          {{- partial "icon.html" (dict "name" "moon" "class" "icon-moon") -}}
+          <span class="sr-only" data-theme-label>{{ i18n "nav_theme_light" }}</span>
+        </button>
+        <button type="button" class="icon-btn nav-toggle" data-nav-toggle
+                aria-expanded="false"
+                aria-controls="primary-nav"
+                data-label-open="{{ i18n "nav_open" }}"
+                data-label-close="{{ i18n "nav_close" }}">
+          {{- partial "icon.html" "menu-2" -}}
+          <span class="sr-only" data-nav-label>{{ i18n "nav_open" }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

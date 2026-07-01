@@ -1,0 +1,45 @@
+.portfolio-meta { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.portfolio-role { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px;
+  border: 1px solid var(--accent); background: transparent; font-size: var(--fs-xs); color: var(--accent-on-soft); white-space: nowrap; }
+.portfolio-role .icon { width: 12px; height: 12px; }
+
+.portfolio-stack { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.portfolio-stack li { padding: 3px 10px; border-radius: var(--rad-sm); border: 1px solid var(--border); background: var(--surface); font-size: var(--fs-xs); color: var(--text); }
+
+.portfolio-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-5); }
+.portfolio-radio { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.portfolio-chip { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); font-size: var(--fs-sm); color: var(--text-muted);
+  cursor: pointer; user-select: none; transition: border-color var(--transition), color var(--transition), background var(--transition); }
+.portfolio-chip:hover { border-color: var(--border-strong); color: var(--text); }
+.portfolio-chip .icon { width: 14px; height: 14px; }
+.portfolio-radio:checked + .portfolio-chip { border-color: var(--accent); color: var(--accent-on-soft); background: var(--accent-soft); }
+.portfolio-radio:focus-visible + .portfolio-chip { outline: 2px solid var(--accent); outline-offset: 2px; }
+.portfolio-chip__count { font-family: var(--font-sans); font-size: var(--fs-xs); color: var(--text-dim); }
+
+.portfolio-grid { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr)); }
+.portfolio-card {
+  display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-5); min-height: 250px;
+  border: 1px solid var(--border); border-radius: var(--rad-lg); background: var(--surface);
+  transition: border-color var(--transition), transform var(--transition), background var(--transition);
+}
+.portfolio-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.portfolio-card__top { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.portfolio-card__badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: var(--fs-xs); color: var(--accent); letter-spacing: 0.04em; }
+.portfolio-card__badge .icon { width: 14px; height: 14px; }
+.portfolio-card__title { font-size: var(--fs-md); margin: 0; color: var(--text-strong); }
+.portfolio-card__desc { color: var(--text-muted); font-size: var(--fs-sm); line-height: 1.55; margin: 0; text-wrap: pretty;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden;
+  min-height: calc(1.55em * 3); }
+.portfolio-card__links { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-4); margin-top: auto; padding-block-start: var(--sp-4); border-block-start: 1px solid var(--border); }
+.portfolio-card__links a { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); font-weight: 500; color: var(--accent); transition: color var(--transition); }
+.portfolio-card__links a:hover, .portfolio-card__links a:focus-visible { color: var(--accent-strong); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.portfolio-card__links .icon { width: 15px; height: 15px; }
+.portfolio-coming {
+  display: flex; flex-direction: column; justify-content: center; gap: var(--sp-2); min-height: 150px;
+  border: 1px dashed var(--border-strong); border-radius: var(--rad-lg); padding: var(--sp-5);
+  background: color-mix(in srgb, var(--surface) 40%, transparent); color: var(--text-muted);
+}
+.portfolio-coming__category { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; color: var(--text); }
+.portfolio-coming__category .icon { width: 18px; height: 18px; color: var(--text-dim); }
+.portfolio-coming__note { font-size: var(--fs-sm); margin: 0; }

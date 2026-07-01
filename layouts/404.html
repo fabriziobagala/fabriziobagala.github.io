@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div class="container">
+  <section class="notfound">
+    <p class="notfound__code"><span class="notfound__grad">404</span></p>
+    <h1 class="notfound__title">{{ i18n "notfound_title" }}</h1>
+    <p class="notfound__subtitle">{{ i18n "notfound_subtitle" }}</p>
+    <div class="notfound__actions">
+      <a href="{{ "/" | relLangURL }}" class="btn btn--primary btn--lg">
+        <span>{{ i18n "notfound_home" }}</span>
+        {{- partial "icon.html" "arrow-right" -}}
+      </a>
+    </div>
+  </section>
+</div>
+{{ end }}

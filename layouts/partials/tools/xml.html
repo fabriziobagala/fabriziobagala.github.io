@@ -1,0 +1,42 @@
+<div class="tool-studio tool-studio--split">
+  <div class="tool-studio__actions" role="toolbar" aria-label="{{ i18n "tools_options" }}">
+    <div class="toolbar-group toolbar-group--options">
+      <div class="field field--inline" data-tooltip="{{ i18n "tools_xml_indent_hint" }}">
+        <label for="xml-indent" class="field__label">{{ i18n "tools_indent" }}</label>
+        <input id="xml-indent" type="number" min="1" max="10" value="2" class="input input--sm">
+      </div>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_xml_minify_hint" }}"><input id="xml-minify" type="checkbox" aria-describedby="xml-minify-hint"><span>{{ i18n "tools_minify" }}</span></label><span id="xml-minify-hint" class="sr-only">{{ i18n "tools_xml_minify_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_xml_sort_attrs_hint" }}"><input id="xml-sort-attrs" type="checkbox" aria-describedby="xml-sort-attrs-hint"><span>{{ i18n "tools_sort_attributes" }}</span></label><span id="xml-sort-attrs-hint" class="sr-only">{{ i18n "tools_xml_sort_attrs_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_xml_preserve_comments_hint" }}"><input id="xml-preserve-comments" type="checkbox" aria-describedby="xml-preserve-comments-hint"><span>{{ i18n "tools_preserve_comments" }}</span></label><span id="xml-preserve-comments-hint" class="sr-only">{{ i18n "tools_xml_preserve_comments_hint" }}</span>
+    </div>
+
+    <div class="toolbar-group toolbar-group--end">
+      <button id="xml-clear-btn" class="toolbar-btn toolbar-btn--ghost" type="button" data-tooltip="{{ i18n "tools_clear_hint" }}">
+        {{ partial "icon.html" "x-circle" }}<span>{{ i18n "tools_clear" }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tool-studio__grid">
+    <section class="tool-studio__pane" aria-labelledby="xml-in-label">
+      <div class="tool-studio__pane-head">
+        <span id="xml-in-label" class="tool-studio__pane-title">{{ i18n "tools_input" }}</span>
+        <output id="xml-validity" class="tool-studio__validity" aria-live="polite" data-state="empty"></output>
+      </div>
+      {{- partial "textarea-numbered.html" (dict "id" "xml-input" "labelledby" "xml-in-label" "placeholder" "<root>\n  <hello lang=\"en\">world</hello>\n</root>") -}}
+    </section>
+
+    <section class="tool-studio__pane" aria-labelledby="xml-out-label">
+      <div class="tool-studio__pane-head">
+        <span id="xml-out-label" class="tool-studio__pane-title">{{ i18n "tools_output" }}</span>
+        <fieldset class="tool-studio__views">
+          <legend class="sr-only">{{ i18n "tools_output" }}</legend>
+          <button class="tool-studio__view-btn is-active" type="button" aria-pressed="true" data-view="xml">{{ i18n "tools_view_xml" }}</button>
+          <button class="tool-studio__view-btn" type="button" aria-pressed="false" data-view="json">{{ i18n "tools_view_json" }}</button>
+        </fieldset>
+        {{- partial "tools/tool-copy.html" (dict "target" "xml-output" "labelledby" "xml-out-label") -}}
+      </div>
+      {{- partial "textarea-numbered.html" (dict "id" "xml-output" "labelledby" "xml-out-label" "readonly" true) -}}
+    </section>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+{{ define "main" }}
+{{- $tool := .Params.tool -}}
+{{- $iconName := .Params.icon | default "tool" -}}
+{{- $toolsURL := "/tools/" | relLangURL -}}
+<div class="container">
+  <div class="tool-shell">
+    <a class="tool-back" href="{{ $toolsURL }}">
+      {{- partial "icon.html" "arrow-right" -}}
+      <span>{{ i18n "tools_back" }}</span>
+    </a>
+
+    <header class="tool-hero">
+      <span class="tool-hero__icon">{{- partial "icon.html" $iconName -}}</span>
+      <div class="tool-hero__text">
+        <h1 class="tool-hero__title">{{ .Title }}</h1>
+        <p class="tool-hero__desc">{{ .Description }}</p>
+      </div>
+      <span class="tool-hero__badge">
+        {{ partial "icon.html" (dict "name" "shield-halved" "class" "tool-hero__badge-icon") }}
+        <span>{{ i18n "tools_browser_only" }}</span>
+      </span>
+    </header>
+
+    <section class="tool" data-tool-scope="{{ $tool }}">
+      {{- $toolPartial := printf "tools/%s.html" $tool -}}
+      {{- if templates.Exists (printf "partials/%s" $toolPartial) -}}
+        {{- partial $toolPartial . -}}
+      {{- else -}}
+        {{- errorf "tools/single.html: unknown tool %q in %s" $tool .File.Path -}}
+      {{- end -}}
+    </section>
+
+    {{- with .Content -}}
+      <div class="post__content tool__content">{{ . }}</div>
+    {{- end -}}
+  </div>
+</div>
+{{ end }}

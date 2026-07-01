@@ -1,0 +1,65 @@
+{{ define "main" }}
+<div class="container">
+  <header class="page-header">
+    <p class="page-header__eyebrow">{{ i18n "eyebrow_contact" }}</p>
+    <h1 class="page-header__title">{{ i18n "contact_title" }}</h1>
+    <p class="page-header__subtitle">{{ i18n "contact_subtitle" }}</p>
+  </header>
+
+  <section class="about-section">
+    <header class="about-section__header">
+      <h2 class="about-section__title">{{ i18n "contact_reasons_title" }}</h2>
+      <p class="about-section__sub">{{ i18n "contact_reasons_subtitle" }}</p>
+    </header>
+    <div class="cards">
+      <div class="card card--static">
+        <span class="card__icon">{{- partial "icon.html" "handshake" -}}</span>
+        <h3 class="card__title">{{ i18n "contact_reason_work_title" }}</h3>
+        <p class="card__desc">{{ i18n "contact_reason_work_desc" }}</p>
+      </div>
+      <div class="card card--static">
+        <span class="card__icon">{{- partial "icon.html" "question" -}}</span>
+        <h3 class="card__title">{{ i18n "contact_reason_tech_title" }}</h3>
+        <p class="card__desc">{{ i18n "contact_reason_tech_desc" }}</p>
+      </div>
+      <div class="card card--static">
+        <span class="card__icon">{{- partial "icon.html" "hand-spock" -}}</span>
+        <h3 class="card__title">{{ i18n "contact_reason_hi_title" }}</h3>
+        <p class="card__desc">{{ i18n "contact_reason_hi_desc" }}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="contact-grid">
+    <section class="contact-grid__form">
+      <header class="about-section__header">
+        <h2 class="about-section__title">{{ i18n "contact_form_title" }}</h2>
+        <p class="about-section__sub">{{ i18n "contact_form_subtitle" }}</p>
+      </header>
+
+      {{ partial "contact-form.html" (dict "prefix" "inset" "mode" "inset") }}
+    </section>
+
+    <section class="contact-grid__channels">
+      <header class="about-section__header">
+        <h2 class="about-section__title">{{ i18n "contact_channels_title" }}</h2>
+        <p class="about-section__sub">{{ i18n "contact_channels_subtitle" }}</p>
+      </header>
+      <ul class="channel-list">
+        <li>
+          <a class="channel" href="{{ site.Params.linkedin }}" target="_blank" rel="noopener">
+            <span class="channel__icon">{{- partial "icon.html" "brand-linkedin" -}}</span>
+            <span class="channel__body">
+              <span class="channel__name">LinkedIn</span>
+              <span class="channel__handle">in/fabriziobagala</span>
+              <span class="channel__desc">{{ i18n "contact_channel_linkedin_desc" }}</span>
+            </span>
+            <span class="sr-only"> {{ i18n "link_new_tab" }}</span>
+            <span class="channel__arrow">{{- partial "icon.html" "external-link" -}}</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>
+</div>
+{{ end }}

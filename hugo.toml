@@ -1,3 +1,109 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = "https://fabriziobagala.com/"
+locale = "en-US"
+title = "Fabrizio Bagalà"
+enableRobotsTXT = false
+enableEmoji = false
+canonifyURLs = false
+disableKinds = []
+summaryLength = 30
+enableGitInfo = true
+
+[taxonomies]
+  tag = "tags"
+
+[pagination]
+  pagerSize = 5
+
+[params]
+  author = "Fabrizio Bagalà"
+  web3forms_access_key = "a848e2f6-a47b-4080-8529-95fd555420d0"
+  linkedin = "https://www.linkedin.com/in/fabriziobagala"
+  github = "https://github.com/fabriziobagala"
+  microsoftlearn = "https://learn.microsoft.com/en-us/users/fabrizio-bagala/"
+  jobTitle = "Senior .NET Developer"
+  location = "Italy"
+  countryCode = "IT"
+  career_start_year = 2017
+  description = "Senior .NET Developer focused on architecture, code quality, and testing."
+  locale = "en_US"
+
+# Markdown
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = false
+  [markup.goldmark.parser]
+    wrapStandAloneImageWithinParagraph = false
+    [markup.goldmark.parser.attribute]
+      block = true
+  [markup.goldmark.extensions.passthrough]
+    enable = true
+    [markup.goldmark.extensions.passthrough.delimiters]
+      block = [['\[', '\]'], ['$$', '$$']]
+      inline = [['\(', '\)'], ['$', '$']]
+  [markup.highlight]
+    style = "github-dark"
+    lineNos = false
+    noClasses = false
+    tabWidth = 2
+    guessSyntax = true
+    codeFences = true
+
+# Build / minification
+[minify]
+  disableXML = true
+  [minify.tdewolff]
+    [minify.tdewolff.html]
+      keepWhitespace = false
+
+# Security policy for Hugo's exec sandbox
+[security]
+  enableInlineShortcodes = false
+  [security.exec]
+    allow = ['^(dart-)?sass(-embedded)?$', '^git$', '^go$', '^npx$', '^postcss$']
+  [security.funcs]
+    getenv = ['^HUGO_', '^CI$']
+
+# Output formats
+[outputs]
+  home = ["HTML"]
+  section = ["HTML"]
+  page = ["HTML"]
+  taxonomy = ["HTML"]
+  term = ["HTML"]
+
+# Menu
+[[menu.main]]
+  identifier = "home"
+  name = "Home"
+  url = "/"
+  weight = 10
+
+[[menu.main]]
+  identifier = "portfolio"
+  name = "Portfolio"
+  url = "/portfolio/"
+  weight = 30
+
+[[menu.main]]
+  identifier = "tools"
+  name = "Tools"
+  url = "/tools/"
+  weight = 48
+
+[[menu.main]]
+  identifier = "blog"
+  name = "Blog"
+  url = "/blog/"
+  weight = 40
+
+[[menu.main]]
+  identifier = "about"
+  name = "About"
+  url = "/about/"
+  weight = 45
+
+[[menu.main]]
+  identifier = "contact"
+  name = "Contact"
+  url = "/contact/"
+  weight = 50

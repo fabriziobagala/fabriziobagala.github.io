@@ -1,0 +1,20 @@
+{{- $posts := where .Site.RegularPages "Section" "blog" -}}
+{{- $index := slice -}}
+{{- range $posts -}}
+  {{- $tags := slice -}}
+  {{- range .Params.tags -}}
+    {{- $tags = $tags | append (dict "name" (partial "term-label.html" .) "slug" (. | urlize) "url" (printf "/tags/%s/" (. | urlize) | relLangURL)) -}}
+  {{- end -}}
+  {{- $entry := dict
+    "title" .Title
+    "url" .RelPermalink
+    "date" (.Date.Format "2006-01-02")
+    "dateDisplay" (.Date | time.Format ":date_long")
+    "description" (.Description | default "")
+    "tags" $tags
+    "summary" (.Summary | plainify | truncate 240)
+    "readingTime" (partial "reading-time.html" .)
+  -}}
+  {{- $index = $index | append $entry -}}
+{{- end -}}
+{{- $index | jsonify -}}

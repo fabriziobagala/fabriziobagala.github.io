@@ -1,0 +1,26 @@
+<section class="table-wrap" tabindex="0" aria-label="{{ i18n "table_scroll_label" }}">
+  <table>
+    {{- with .THead -}}
+      <thead>
+        {{- range . -}}
+          <tr>
+            {{- range . -}}
+              <th scope="col"{{ with .Alignment }} class="align-{{ . }}"{{ end }}>{{ .Text | safeHTML }}</th>
+            {{- end -}}
+          </tr>
+        {{- end -}}
+      </thead>
+    {{- end -}}
+    {{- with .TBody -}}
+      <tbody>
+        {{- range . -}}
+          <tr>
+            {{- range . -}}
+              <td{{ with .Alignment }} class="align-{{ . }}"{{ end }}>{{ .Text | safeHTML }}</td>
+            {{- end -}}
+          </tr>
+        {{- end -}}
+      </tbody>
+    {{- end -}}
+  </table>
+</section>

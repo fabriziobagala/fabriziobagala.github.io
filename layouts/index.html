@@ -1,0 +1,98 @@
+{{ define "main" }}
+
+{{- $posts := where site.RegularPages "Section" "blog" -}}
+{{- $sorted := $posts.ByDate.Reverse -}}
+{{- $latest5 := first 5 $sorted -}}
+{{- $latestPost := false -}}{{- if gt (len $sorted) 0 }}{{ $latestPost = index $sorted 0 }}{{ end -}}
+{{- $pf := site.GetPage "/portfolio" -}}
+{{- $featured := $pf.Params.featured -}}
+{{- $pfProjects := $pf.Params.projects -}}
+{{- $pfCategories := $pf.Params.categories -}}
+
+<div class="landing container">
+
+  <header class="landing-hero">
+    <span class="landing-pill"><span class="dot"></span>{{ site.Params.jobTitle }} · {{ site.Params.location }}</span>
+    <h1 class="landing-title">{{ i18n "home_hello" }} 👋</h1>
+    <p class="landing-lead">{{ i18n "home_intro" }}</p>
+  </header>
+
+  <section class="landing-section" id="portfolio">
+    <div class="landing-section__head">
+      <p class="landing-eyebrow">{{ i18n "eyebrow_portfolio" }}</p>
+      <h2 class="landing-section__title">{{ i18n "portfolio_title" }}</h2>
+    </div>
+    {{- with $featured -}}
+
+      {{- $status := .status -}}
+      {{- range (where $pfProjects "name" .name) }}{{ $status = .status }}{{ end -}}
+      <article class="landing-feature">
+        <div class="landing-feature__head">
+          <p class="landing-feature__eyebrow">{{ i18n "eyebrow_portfolio" }} · {{ i18n "eyebrow_featured" }}</p>
+          {{- if $status }}<span class="portfolio-status portfolio-status--{{ $status }}"><span class="dot"></span>{{ i18n (printf "portfolio_status_%s" $status) }}</span>{{ end -}}
+        </div>
+        <h3 class="landing-feature__title">{{ .name }}</h3>
+        <p class="landing-feature__desc">{{ .description }}</p>
+        {{- with .stack -}}<ul class="landing-stack">{{- range . -}}<li>{{ . }}</li>{{- end -}}</ul>{{- end -}}
+        {{- if or .url .source -}}
+        <div class="landing-feature__foot">
+          {{- with .url -}}<a href="{{ . }}" target="_blank" rel="noopener">{{- partial "icon.html" "globe" -}}<span>{{ i18n "portfolio_view_project" }}</span></a>{{- end -}}
+          {{- with .source -}}<a href="{{ . }}" target="_blank" rel="noopener">{{- partial "icon.html" "brand-github" -}}<span>{{ i18n "portfolio_source" }}</span></a>{{- end -}}
+        </div>
+        {{- end -}}
+      </article>
+    {{- end -}}
+    <div class="portfolio-categories">
+      {{- range $pfCategories -}}
+        {{- $items := where $pfProjects "category" .name -}}
+        <a class="portfolio-category" href="{{ "/portfolio/" | relLangURL }}#filter-{{ .name | urlize }}">
+          <span class="portfolio-category__icon">{{- partial "icon.html" (.icon | default "briefcase") -}}</span>
+          <span class="portfolio-category__body">
+            <span class="portfolio-category__name">{{ .name }}</span>
+            {{- with .note }}<span class="portfolio-category__note">{{ . }}</span>{{ end -}}
+          </span>
+          <span class="portfolio-category__count">{{ len $items }}</span>
+        </a>
+      {{- end -}}
+    </div>
+  </section>
+
+  <section class="landing-section" id="blog">
+    <div class="landing-section__head">
+      <p class="landing-eyebrow">{{ i18n "eyebrow_blog" }}</p>
+      <h2 class="landing-section__title">{{ i18n "home_section_blog" }}</h2>
+      <p class="landing-section__sub">{{ i18n "home_section_blog_desc" }}</p>
+    </div>
+    <div class="blog-latest">
+      {{- with $latestPost -}}
+        <a class="blog-latest__lead" href="{{ .RelPermalink }}">
+          <p class="blog-latest__eyebrow">{{ i18n "eyebrow_blog" }} · {{ i18n "eyebrow_latest" }}</p>
+          <h3 class="blog-latest__title">{{ .Title }}</h3>
+          <p class="blog-latest__desc">{{ with .Description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 200 }}{{ end }}</p>
+          {{- partial "home/article-meta.html" . -}}
+        </a>
+      {{- end -}}
+      <div class="blog-latest__grid">
+        {{- range first 4 (after 1 $latest5) -}}
+          <a class="blog-card" href="{{ .RelPermalink }}">
+            <p class="blog-card__eyebrow">{{ i18n "eyebrow_blog" }}</p>
+            <h3 class="blog-card__title">{{ .Title }}</h3>
+            <p class="blog-card__desc">{{ with .Description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 120 }}{{ end }}</p>
+            {{- partial "home/article-meta.html" . -}}
+          </a>
+        {{- end -}}
+      </div>
+    </div>
+    <p class="landing-more"><a class="landing-link" href="{{ "/blog/" | relLangURL }}"><span>{{ i18n "home_view_all" }}</span>{{- partial "icon.html" "arrow-right" -}}</a></p>
+  </section>
+
+  <section class="landing-section">
+    <div class="landing-cta">
+      <h2>{{ i18n "contact_title" }}</h2>
+      <p>{{ i18n "contact_subtitle" }}</p>
+      <a href="{{ "/contact/" | relLangURL }}" class="btn btn--primary btn--lg"><span>{{ i18n "home_cta_contact" }}</span>{{- partial "icon.html" "send" -}}</a>
+    </div>
+  </section>
+
+</div>
+{{ end }}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-US"
+      data-i18n-copy="{{ i18n "code_copy" }}"
+      data-i18n-copied="{{ i18n "code_copied" }}">
+<head>
+  <title>{{ partial "page-title.html" . }}</title>
+  {{- partial "head.html" . -}}
+</head>
+<body>
+  <a href="#main" class="skip-link">{{ i18n "nav_skip" }}</a>
+  {{- partial "header.html" . -}}
+
+  <main id="main" tabindex="-1"{{ if not .IsHome }} class="main--page"{{ end }}>
+    {{- block "main" . }}{{ end -}}
+  </main>
+
+  {{- partial "footer.html" . -}}
+
+  {{- $main := resources.Get "js/main.js" | resources.Minify | resources.Fingerprint -}}
+  <script src="{{ $main.RelPermalink }}" integrity="{{ $main.Data.Integrity }}" defer></script>
+
+  {{- with .Params.tool -}}
+
+    {{- if eq . "json" -}}
+      {{- with resources.Get "vendor/js-yaml.min.js" -}}
+        {{- $yaml := . | resources.Fingerprint -}}
+        <script src="{{ $yaml.RelPermalink }}" integrity="{{ $yaml.Data.Integrity }}" defer></script>
+      {{- end -}}
+    {{- end -}}
+    {{- $script := resources.Get (printf "js/tools/%s.js" .) -}}
+    {{- if $script -}}
+      {{- $script = $script | resources.Minify | resources.Fingerprint -}}
+      <script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>
+    {{- end -}}
+  {{- end -}}
+
+  {{- if .Params.math -}}
+    <script defer src="{{ "/katex/katex.min.js" | relURL }}" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
+    <script defer src="{{ "/katex/auto-render.min.js" | relURL }}" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
+    {{- $katexInit := resources.Get "js/katex-init.js" | resources.Minify | resources.Fingerprint -}}
+    <script src="{{ $katexInit.RelPermalink }}" integrity="{{ $katexInit.Data.Integrity }}" defer></script>
+  {{- end -}}
+</body>
+</html>

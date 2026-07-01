@@ -1,0 +1,110 @@
+{{- $url := .Permalink -}}
+{{- $title := .Title -}}
+{{- $linkedin := printf "https://www.linkedin.com/sharing/share-offsite/?url=%s" (urlquery $url) -}}
+{{- $x := printf "https://x.com/intent/post?text=%s&url=%s" (urlquery $title) (urlquery $url) -}}
+{{- $bluesky := printf "https://bsky.app/intent/compose?text=%s" (urlquery (printf "%s %s" $title $url)) -}}
+
+<section class="post-share" aria-labelledby="post-share-heading">
+  <h2 id="post-share-heading" class="post-share__heading">
+    {{ partial "icon.html" "share-nodes" }}
+    <span>{{ i18n "blog_share_heading" }}</span>
+  </h2>
+  <ul class="share-buttons">
+    <li>
+      <a class="share-btn share-btn--linkedin"
+         href="{{ $linkedin }}"
+         target="_blank"
+         rel="noopener noreferrer">
+        {{ partial "icon.html" "brand-linkedin" }}
+        <span>LinkedIn</span>
+        <span class="sr-only"> {{ i18n "link_new_tab" }}</span>
+      </a>
+    </li>
+    <li>
+      <a class="share-btn share-btn--x"
+         href="{{ $x }}"
+         target="_blank"
+         rel="noopener noreferrer">
+        {{ partial "icon.html" "brand-x" }}
+        <span>X</span>
+        <span class="sr-only"> {{ i18n "link_new_tab" }}</span>
+      </a>
+    </li>
+    <li>
+      <a class="share-btn share-btn--bluesky"
+         href="{{ $bluesky }}"
+         target="_blank"
+         rel="noopener noreferrer">
+        {{ partial "icon.html" "brand-bluesky" }}
+        <span>Bluesky</span>
+        <span class="sr-only"> {{ i18n "link_new_tab" }}</span>
+      </a>
+    </li>
+    <li>
+      <button type="button"
+              class="share-btn share-btn--mastodon"
+              data-share-mastodon-trigger
+              aria-haspopup="dialog">
+        {{ partial "icon.html" "brand-mastodon" }}
+        <span>Mastodon</span>
+      </button>
+    </li>
+    <li>
+      <button type="button"
+              class="share-btn share-btn--copy"
+              data-share-copy
+              data-share-url="{{ $url }}"
+              data-label-copy="{{ i18n "blog_share_copy_link" }}"
+              data-label-copied="{{ i18n "blog_share_copied" }}"
+              aria-label="{{ i18n "blog_share_copy_link" }}">
+        <span class="share-btn__icon share-btn__icon--default">{{ partial "icon.html" "link" }}</span>
+        <span class="share-btn__icon share-btn__icon--done">{{ partial "icon.html" "check" }}</span>
+        <span class="share-btn__label">{{ i18n "blog_share_copy_link" }}</span>
+      </button>
+    </li>
+  </ul>
+
+  <dialog class="mastodon-dialog"
+          data-share-mastodon-dialog
+          data-share-url="{{ $url }}"
+          data-share-title="{{ $title }}"
+          aria-labelledby="mastodon-dialog-title">
+    <form method="dialog" class="mastodon-dialog__form" data-share-mastodon-form>
+      <header class="mastodon-dialog__header">
+        <div>
+          <h2 id="mastodon-dialog-title" class="mastodon-dialog__title">
+            {{ partial "icon.html" "brand-mastodon" }}
+            <span>{{ i18n "blog_share_mastodon_title" }}</span>
+          </h2>
+          <p class="mastodon-dialog__sub">{{ i18n "blog_share_mastodon_sub" }}</p>
+        </div>
+        <button type="button"
+                class="mastodon-dialog__close"
+                data-share-mastodon-cancel>
+          {{ partial "icon.html" "x-circle" }}
+          <span class="sr-only">{{ i18n "stack_more_close" }}</span>
+        </button>
+      </header>
+      <label class="mastodon-dialog__field">
+        <span class="mastodon-dialog__label">{{ i18n "blog_share_mastodon_instance" }}</span>
+        <input type="text"
+               name="instance"
+               class="mastodon-dialog__input"
+               placeholder="mastodon.social"
+               autocomplete="off"
+               autocapitalize="off"
+               spellcheck="false"
+               required>
+      </label>
+      <div class="mastodon-dialog__actions">
+        <button type="button" class="btn btn--ghost" data-share-mastodon-cancel>
+          {{ i18n "blog_share_cancel" }}
+        </button>
+        <button type="submit" class="btn btn--primary">
+          {{ partial "icon.html" "brand-mastodon" }}
+          <span>{{ i18n "blog_share_open_mastodon" }}</span>
+        </button>
+      </div>
+    </form>
+  </dialog>
+</section>

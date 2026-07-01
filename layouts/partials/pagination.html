@@ -1,0 +1,55 @@
+{{- $p := .p -}}
+{{- if gt $p.TotalPages 1 -}}
+<nav class="pagination" aria-label="{{ i18n "pagination_label" }}">
+  {{- with $p.Prev -}}
+    <a class="pagination__link pagination__link--prev" href="{{ .URL }}" rel="prev">
+      <span aria-hidden="true">&lt;</span>
+      <span>{{ i18n "pagination_prev" }}</span>
+    </a>
+  {{- else -}}
+    <span class="pagination__link pagination__link--prev is-disabled" aria-disabled="true">
+      <span aria-hidden="true">&lt;</span>
+      <span>{{ i18n "pagination_prev" }}</span>
+    </span>
+  {{- end -}}
+
+  {{- $current := $p.PageNumber -}}
+  {{- $total := $p.TotalPages -}}
+  {{- if .showCurrent -}}
+  <span class="pagination__current" aria-hidden="true">{{ $current }}/{{ $total }}</span>
+  {{- end -}}
+
+  <ol class="pagination__pages">
+    {{- $last := 0 -}}
+    {{- range $p.Pagers -}}
+      {{- $n := .PageNumber -}}
+      {{- $show := or (le $total 5) (eq $n 1) (eq $n $total) (and (ge $n (sub $current 1)) (le $n (add $current 1))) -}}
+      {{- if $show -}}
+        {{- if gt $n (add $last 1) -}}
+          <li class="pagination__ellipsis" aria-hidden="true">…</li>
+        {{- end -}}
+        <li>
+          {{- if eq $n $current -}}
+            <span class="pagination__page is-current" aria-current="page">{{ $n }}</span>
+          {{- else -}}
+            <a class="pagination__page" href="{{ .URL }}">{{ $n }}</a>
+          {{- end -}}
+        </li>
+        {{- $last = $n -}}
+      {{- end -}}
+    {{- end -}}
+  </ol>
+
+  {{- with $p.Next -}}
+    <a class="pagination__link pagination__link--next" href="{{ .URL }}" rel="next">
+      <span>{{ i18n "pagination_next" }}</span>
+      <span aria-hidden="true">&gt;</span>
+    </a>
+  {{- else -}}
+    <span class="pagination__link pagination__link--next is-disabled" aria-disabled="true">
+      <span>{{ i18n "pagination_next" }}</span>
+      <span aria-hidden="true">&gt;</span>
+    </span>
+  {{- end -}}
+</nav>
+{{- end -}}

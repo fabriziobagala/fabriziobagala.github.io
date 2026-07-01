@@ -1,0 +1,43 @@
+<div class="tool-studio tool-studio--split">
+  <div class="tool-studio__actions" role="toolbar" aria-label="{{ i18n "tools_options" }}">
+    <div class="toolbar-group toolbar-group--options">
+      <label class="checkbox" data-tooltip="{{ i18n "tools_uuid_uppercase_hint" }}"><input id="uuid-uppercase" type="checkbox" aria-describedby="uuid-uppercase-hint"><span>{{ i18n "tools_uuid_uppercase" }}</span></label><span id="uuid-uppercase-hint" class="sr-only">{{ i18n "tools_uuid_uppercase_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_uuid_hyphens_hint" }}"><input id="uuid-hyphens" type="checkbox" checked aria-describedby="uuid-hyphens-hint"><span>{{ i18n "tools_uuid_hyphens" }}</span></label><span id="uuid-hyphens-hint" class="sr-only">{{ i18n "tools_uuid_hyphens_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_uuid_braces_hint" }}"><input id="uuid-braces" type="checkbox" aria-describedby="uuid-braces-hint"><span>{{ i18n "tools_uuid_braces" }}</span></label><span id="uuid-braces-hint" class="sr-only">{{ i18n "tools_uuid_braces_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_uuid_quotes_hint" }}"><input id="uuid-quotes" type="checkbox" aria-describedby="uuid-quotes-hint"><span>{{ i18n "tools_uuid_quotes" }}</span></label><span id="uuid-quotes-hint" class="sr-only">{{ i18n "tools_uuid_quotes_hint" }}</span>
+    </div>
+
+    <div class="toolbar-group toolbar-group--end">
+      <button id="uuid-generate-btn" class="toolbar-btn" type="button" data-tooltip="{{ i18n "tools_uuid_generate_hint" }}">
+        {{ partial "icon.html" "rotate" }}<span>{{ i18n "tools_generate" }}</span>
+      </button>
+      <button id="uuid-clear-btn" class="toolbar-btn toolbar-btn--ghost" type="button" data-tooltip="{{ i18n "tools_clear_hint" }}">
+        {{ partial "icon.html" "x-circle" }}<span>{{ i18n "tools_clear" }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tool-studio__grid">
+    <section class="tool-studio__pane" aria-labelledby="uuid-in-label">
+      <div class="tool-studio__pane-head">
+        <span id="uuid-in-label" class="tool-studio__pane-title">{{ i18n "tools_input" }}</span>
+        <output id="uuid-validity" class="tool-studio__validity" aria-live="polite" data-state="empty"></output>
+      </div>
+      {{- partial "textarea-numbered.html" (dict "id" "uuid-input" "labelledby" "uuid-in-label" "placeholder" "550e8400-e29b-41d4-a716-446655440000") -}}
+    </section>
+
+    <section class="tool-studio__pane" aria-labelledby="uuid-out-label">
+      <div class="tool-studio__pane-head">
+        <span id="uuid-out-label" class="tool-studio__pane-title">{{ i18n "tools_output" }}</span>
+        <fieldset class="tool-studio__views">
+          <legend class="sr-only">{{ i18n "tools_output" }}</legend>
+          <button class="tool-studio__view-btn is-active" type="button" aria-pressed="true" data-view="uuid">{{ i18n "tools_view_uuid" }}</button>
+          <button class="tool-studio__view-btn" type="button" aria-pressed="false" data-view="base64">{{ i18n "tools_view_base64" }}</button>
+          <button class="tool-studio__view-btn" type="button" aria-pressed="false" data-view="hex">{{ i18n "tools_view_hex" }}</button>
+        </fieldset>
+        {{- partial "tools/tool-copy.html" (dict "target" "uuid-output" "labelledby" "uuid-out-label") -}}
+      </div>
+      {{- partial "textarea-numbered.html" (dict "id" "uuid-output" "labelledby" "uuid-out-label" "readonly" true) -}}
+    </section>
+  </div>
+</div>

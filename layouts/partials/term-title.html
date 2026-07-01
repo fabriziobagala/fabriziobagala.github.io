@@ -1,0 +1,11 @@
+{{- $term := . | lower -}}
+{{- $map := dict
+  "csharp" "C#"
+  "oop" "OOP"
+  "solid" "SOLID"
+-}}
+{{- $label := index $map $term -}}
+{{- if not $label -}}
+  {{- $label = $term | replaceRE "-" " " | title -}}
+{{- end -}}
+{{- return $label -}}

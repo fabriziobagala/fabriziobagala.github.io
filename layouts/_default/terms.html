@@ -1,0 +1,29 @@
+{{ define "main" }}
+
+<div class="container container--narrow">
+  <header class="page-header">
+    <p class="page-header__eyebrow">{{ i18n "eyebrow_tags" }}</p>
+    <h1 class="page-header__title">{{ i18n "tags_tagline" }}</h1>
+    <p class="page-header__subtitle">{{ i18n "tags_subtitle" }}</p>
+  </header>
+
+  {{- $terms := index .Site.Taxonomies .Data.Plural -}}
+  {{- if $terms -}}
+    <ul class="tag-cloud">
+      {{- range $terms.ByCount -}}
+        <li>
+          <a class="tag-chip tag-chip--lg" href="{{ .Page.RelPermalink }}">
+            {{- partial "icon.html" "tag" -}}
+            <span>{{ partial "term-label.html" .Page.Title }}</span>
+            <span class="tag-chip__count">{{ .Count }}</span>
+          </a>
+        </li>
+      {{- end -}}
+    </ul>
+  {{- else -}}
+    <p class="page-header__subtitle">{{ i18n "tags_empty" }}</p>
+  {{- end -}}
+
+  <a href="{{ "/blog/" | relLangURL }}" class="post__back">← {{ i18n "tags_back_to_blog" }}</a>
+</div>
+{{ end }}

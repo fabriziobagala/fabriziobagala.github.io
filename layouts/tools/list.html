@@ -1,0 +1,25 @@
+{{ define "main" }}
+<div class="container">
+  <header class="page-header">
+    <p class="page-header__eyebrow">{{ i18n "eyebrow_tools" }}</p>
+    <h1 class="page-header__title">{{ i18n "tools_title" }}</h1>
+    <p class="page-header__subtitle">{{ i18n "tools_subtitle" }}</p>
+  </header>
+
+  <div class="cards">
+    {{- range .RegularPages.ByWeight -}}
+      {{- $iconName := "tool" -}}
+      {{- with .Params.icon }}{{ $iconName = . }}{{ end -}}
+      <a href="{{ .RelPermalink }}" class="card">
+        <span class="card__icon">{{- partial "icon.html" $iconName -}}</span>
+        <h2 class="card__title">{{ .Title }}</h2>
+        <p class="card__desc">{{ .Description }}</p>
+        <span class="card__cta">
+          <span>{{ i18n "tools_open_tool" }}</span>
+          {{- partial "icon.html" "arrow-right" -}}
+        </span>
+      </a>
+    {{- end -}}
+  </div>
+</div>
+{{ end }}

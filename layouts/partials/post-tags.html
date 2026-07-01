@@ -1,0 +1,13 @@
+{{- with .Params.tags -}}
+  <ul class="tag-list" aria-label="{{ i18n "blog_tags_label" }}">
+    {{- range . -}}
+      {{- $url := printf "/tags/%s/" (. | urlize) | relLangURL -}}
+      <li class="tag-list__item">
+        <a class="tag-chip" href="{{ $url }}" rel="tag">
+          {{- partial "icon.html" "tag" -}}
+          <span>{{ partial "term-label.html" . }}</span>
+        </a>
+      </li>
+    {{- end -}}
+  </ul>
+{{- end -}}

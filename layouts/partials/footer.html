@@ -1,0 +1,38 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div>
+        <p class="site-footer__brand">{{ site.Params.author }}</p>
+        <p class="site-footer__tagline">{{ site.Params.description }}</p>
+        <div class="site-footer__socials">
+          <a href="{{ site.Params.linkedin }}" rel="me noopener" target="_blank" class="icon-btn" data-tooltip="LinkedIn" aria-label="LinkedIn {{ i18n "link_new_tab" }}">
+            {{- partial "icon.html" "brand-linkedin" -}}
+          </a>
+          <a href="{{ site.Params.github }}" rel="me noopener" target="_blank" class="icon-btn" data-tooltip="GitHub" aria-label="GitHub {{ i18n "link_new_tab" }}">
+            {{- partial "icon.html" "brand-github" -}}
+          </a>
+          <a href="{{ site.Params.microsoftlearn }}" rel="me noopener" target="_blank" class="icon-btn" data-tooltip="Microsoft Learn" aria-label="Microsoft Learn {{ i18n "link_new_tab" }}">
+            {{- partial "icon.html" "brand-microsoft" -}}
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <nav aria-label="{{ i18n "nav_footer" }}">
+          <ul class="site-footer__links site-footer__links--cols">
+            {{- range site.Menus.main -}}
+              {{- if not .Parent -}}
+                <li><a href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
+              {{- end -}}
+            {{- end -}}
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <span>© {{ now.Format "2006" }} {{ site.Params.author }}. {{ i18n "footer_rights" }}</span>
+      <span>{{ i18n "footer_built" }}</span>
+    </div>
+  </div>
+</footer>

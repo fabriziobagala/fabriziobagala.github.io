@@ -1,0 +1,38 @@
+{{- $name := "" -}}
+{{- $class := "icon" -}}
+{{- $size := 0 -}}
+{{- $label := "" -}}
+{{- if reflect.IsMap . -}}
+  {{- $name = .name -}}
+  {{- with .class }}{{ $class = printf "icon %s" . }}{{ end -}}
+  {{- with .size }}{{ $size = . }}{{ end -}}
+  {{- with .label }}{{ $label = . }}{{ end -}}
+{{- else -}}
+  {{- $name = . -}}
+{{- end -}}
+
+{{- $resource := resources.Get (printf "icons/%s.svg" $name) -}}
+{{- if not $resource -}}
+  {{- errorf "icon not found: %s" $name -}}
+{{- end -}}
+
+{{- $svg := $resource.Content -}}
+
+{{- $svg = replaceRE `(?s)<!--.*?-->\s*` "" $svg -}}
+
+{{- $svg = replaceRE `(<svg\b[^>]*?)\s+class="[^"]*"` "$1" $svg -}}
+{{- $svg = replaceRE `(<svg\b[^>]*?)\s+fill="[^"]*"` "$1" $svg -}}
+{{- $svg = replaceRE `(<svg\b[^>]*?)\s+width="[^"]*"` "$1" $svg -}}
+{{- $svg = replaceRE `(<svg\b[^>]*?)\s+height="[^"]*"` "$1" $svg -}}
+
+{{- $attrs := printf `class="%s" fill="currentColor"` $class -}}
+{{- if gt $size 0 -}}
+  {{- $attrs = printf `%s width="%d" height="%d"` $attrs $size $size -}}
+{{- end -}}
+{{- if $label -}}
+  {{- $attrs = printf `%s role="img" aria-label="%s"` $attrs $label -}}
+{{- else -}}
+  {{- $attrs = printf `%s aria-hidden="true" focusable="false"` $attrs -}}
+{{- end -}}
+{{- $svg = replaceRE `^<svg\s` (printf "<svg %s " $attrs) $svg -}}
+{{- safeHTML $svg -}}

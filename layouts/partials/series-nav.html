@@ -1,0 +1,41 @@
+{{- with partial "series-data.html" . -}}
+  {{- if and (ge .currentIndex 0) (gt .total 1) -}}
+    {{- $parts := .parts -}}
+    {{- $currentIndex := .currentIndex -}}
+    {{- $total := .total -}}
+    {{- $prev := "" -}}
+    {{- $next := "" -}}
+    {{- if gt $currentIndex 0 -}}{{ $prev = index $parts (sub $currentIndex 1) }}{{- end -}}
+    {{- if lt (add $currentIndex 1) $total -}}{{ $next = index $parts (add $currentIndex 1) }}{{- end -}}
+
+    <nav class="series-pager" aria-label="{{ i18n "blog_series_label" }}">
+      {{- with $prev -}}
+        <a href="{{ .RelPermalink }}">
+          <span class="series-pager__label"><span aria-hidden="true">←</span> {{ i18n "blog_series_prev" }}</span>
+          <span class="series-pager__title">{{ .Title }}</span>
+        </a>
+      {{- end -}}
+      {{- with $next -}}
+        <a href="{{ .RelPermalink }}" class="series-pager__next">
+          <span class="series-pager__label">{{ i18n "blog_series_next" }} <span aria-hidden="true">→</span></span>
+          <span class="series-pager__title">{{ .Title }}</span>
+        </a>
+      {{- end -}}
+    </nav>
+
+    <nav class="series-nav" aria-labelledby="series-nav-heading">
+      <h3 id="series-nav-heading">{{ i18n "blog_series_all_parts" }}</h3>
+      <ol>
+        {{- range $i, $p := $parts -}}
+          <li>
+            {{- if eq $i $currentIndex -}}
+              <span class="series-nav__current">{{ $p.Title }}</span>
+            {{- else -}}
+              <a href="{{ $p.RelPermalink }}">{{ $p.Title }}</a>
+            {{- end -}}
+          </li>
+        {{- end -}}
+      </ol>
+    </nav>
+  {{- end -}}
+{{- end -}}

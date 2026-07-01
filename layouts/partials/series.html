@@ -1,0 +1,16 @@
+{{- with partial "series-data.html" . -}}
+  {{- if and (ge .currentIndex 0) (gt .total 1) -}}
+    {{- $position := add .currentIndex 1 -}}
+
+    <aside class="series-banner">
+      <span class="series-banner__icon">{{ partial "icon.html" "news" }}</span>
+      <div>
+        <p class="series-banner__title">{{ i18n "blog_series_label" }}</p>
+        <p class="series-banner__name">{{ .name }}</p>
+        <p class="series-banner__progress">
+          {{ i18n "blog_series_part" (dict "part" $position "total" .total) }}
+        </p>
+      </div>
+    </aside>
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,10 @@
+{{- $id := .id -}}
+<div class="textarea-numbered" data-numbered>
+  <div class="textarea-numbered__gutter" aria-hidden="true">1</div>
+  <textarea id="{{ $id }}" class="textarea textarea-numbered__area" wrap="off" spellcheck="false"
+    {{- with .labelledby }} aria-labelledby="{{ . }}"{{ end }}
+    {{- with .run }} data-run="{{ . }}"{{ end }}
+    {{- with .placeholder }} placeholder="{{ . }}"{{ end }}
+    {{- if .readonly }} readonly{{ end -}}
+  ></textarea>
+</div>

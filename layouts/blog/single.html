@@ -1,0 +1,32 @@
+{{ define "main" }}
+<article class="post container">
+  <header class="post__head">
+    <p class="post__meta">
+      <span class="post__meta-box">
+        {{- partial "post-meta-items.html" . -}}
+      </span>
+    </p>
+    <h1 class="post__title">{{ .Title }}</h1>
+    {{- with .Description -}}<p class="page-header__subtitle">{{ . }}</p>{{- end -}}
+  </header>
+
+  {{ partial "series.html" . }}
+
+  <div class="post__content">
+    {{ .Content }}
+  </div>
+
+  {{ partial "series-nav.html" . }}
+
+  {{- with .Params.tags -}}
+    <footer class="post__tags">
+      <p class="post__tags-label">{{ partial "icon.html" "tags-fill" }} {{ i18n "blog_tagged_with" }}</p>
+      {{- partial "post-tags.html" $ -}}
+    </footer>
+  {{- end -}}
+
+  {{ partial "post-share.html" . }}
+
+  <a href="{{ "/blog/" | relLangURL }}" class="post__back">← {{ i18n "blog_back" }}</a>
+</article>
+{{ end }}

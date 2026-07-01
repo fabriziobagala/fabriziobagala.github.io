@@ -1,0 +1,60 @@
+{{ define "main" }}
+{{- $projects := .Params.projects -}}
+{{- $categories := .Params.categories -}}
+{{- $catIcons := dict -}}
+{{- range $categories -}}{{- $catIcons = merge $catIcons (dict .name (.icon | default "briefcase")) -}}{{- end -}}
+
+<div class="container">
+  <header class="page-header">
+    <p class="page-header__eyebrow">{{ i18n "eyebrow_portfolio" }}</p>
+    <h1 class="page-header__title">{{ i18n "portfolio_title" }}</h1>
+    <p class="page-header__subtitle">{{ i18n "portfolio_subtitle" }}</p>
+  </header>
+
+  <section id="portfolio-showcase">
+    <div class="portfolio-chips" role="radiogroup" aria-label="{{ i18n "portfolio_filter_label" }}">
+      <input class="portfolio-radio" type="radio" name="portfolio-filter" id="portfolio-filter-all" checked>
+      <label class="portfolio-chip" for="portfolio-filter-all">{{ i18n "portfolio_filter_all" }}<span class="portfolio-chip__count">{{ len $projects }}</span></label>
+      {{- range $c := $categories -}}
+        {{- $items := where $projects "category" $c.name -}}
+        {{- $slug := $c.name | urlize -}}
+        <input class="portfolio-radio" type="radio" name="portfolio-filter" id="portfolio-filter-{{ $slug }}">
+        <label class="portfolio-chip" for="portfolio-filter-{{ $slug }}">{{- partial "icon.html" ($c.icon | default "briefcase") -}}{{ $c.name }}<span class="portfolio-chip__count">{{ len $items }}</span></label>
+      {{- end -}}
+    </div>
+    <div class="portfolio-grid">
+    {{- range $projects -}}
+      <article class="portfolio-card" data-category="{{ .category }}">
+        <div class="portfolio-card__top">
+          <span class="portfolio-card__badge">{{- partial "icon.html" (index $catIcons .category | default "briefcase") -}}{{ .category }}</span>
+          <span class="portfolio-meta">
+            {{- with .role -}}<span class="portfolio-role">{{- partial "icon.html" "hand-holding-heart" -}}{{ . }}</span>{{- end -}}
+            {{- $status := .status | default "progress" -}}
+            <span class="portfolio-status portfolio-status--{{ $status }}"><span class="dot"></span>{{ i18n (printf "portfolio_status_%s" $status) }}</span>
+          </span>
+        </div>
+        <h2 class="portfolio-card__title">{{ .name }}</h2>
+        <p class="portfolio-card__desc">{{ .description }}</p>
+        {{- with .stack -}}<ul class="portfolio-stack">{{- range . -}}<li>{{ . }}</li>{{- end -}}</ul>{{- end -}}
+        {{- if or .url .source -}}
+        <div class="portfolio-card__links">
+          {{- with .url -}}<a href="{{ . }}" target="_blank" rel="noopener">{{- partial "icon.html" "globe" -}}<span>{{ i18n "portfolio_view_project" }}</span></a>{{- end -}}
+          {{- with .source -}}<a href="{{ . }}" target="_blank" rel="noopener">{{- partial "icon.html" "brand-github" -}}<span>{{ i18n "portfolio_source" }}</span></a>{{- end -}}
+        </div>
+        {{- end -}}
+      </article>
+    {{- end -}}
+    {{- range $categories -}}
+      {{- $items := where $projects "category" .name -}}
+      {{- if not $items -}}
+        <div class="portfolio-coming" data-category="{{ .name }}">
+          <span class="portfolio-coming__category">{{- partial "icon.html" (.icon | default "briefcase") -}}{{ .name }}</span>
+          <p class="portfolio-coming__note">{{ with .note }}{{ . }}{{ else }}{{ i18n "portfolio_empty_category" }}{{ end }}</p>
+        </div>
+      {{- end -}}
+    {{- end -}}
+    </div>
+  </section>
+
+</div>
+{{ end }}

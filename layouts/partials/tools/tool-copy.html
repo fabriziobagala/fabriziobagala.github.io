@@ -1,0 +1,4 @@
+<button type="button" class="tool-copy" data-copy-target="{{ .target }}" data-tooltip="{{ i18n "code_copy" }}" aria-label="{{ i18n "code_copy" }}"
+  {{- with .labelledby }} aria-describedby="{{ . }}"{{ end }}>
+  <span class="tool-copy__icon" aria-hidden="true"></span>
+</button>

@@ -1,0 +1,106 @@
+{{ define "main" }}
+<div class="container">
+  <header class="page-header">
+    <p class="page-header__eyebrow">{{ i18n "eyebrow_blog" }}</p>
+    <h1 class="page-header__title">{{ i18n "blog_title" }}</h1>
+    <p class="page-header__subtitle">{{ i18n "blog_subtitle" }}</p>
+  </header>
+
+  {{- $posts := .RegularPages -}}
+  {{- if $posts -}}
+
+    {{- $jsonURL := "/blog/index.json" | relLangURL -}}
+    {{- $terms := index .Site.Taxonomies "tags" -}}
+
+    <div class="blog-layout">
+      <aside class="blog-layout__aside">
+        <search class="blog-controls"
+                 data-blog-search
+                 data-index-url="{{ $jsonURL }}"
+                 data-no-results="{{ i18n "blog_search_no_results" }}"
+                 data-results-count="{{ i18n "blog_search_results_count" (dict "count" "__N__") }}"
+                 data-minutes-label="{{ i18n "blog_minutes_read" }}">
+          <div class="search-box">
+            <label class="search-box__label" for="blog-search-input">
+              {{- partial "icon.html" "search" -}}
+              <span class="sr-only">{{ i18n "blog_search_placeholder" }}</span>
+            </label>
+            <input id="blog-search-input"
+                   class="search-box__input"
+                   type="search"
+                   autocomplete="off"
+                   spellcheck="false"
+                   placeholder="{{ i18n "blog_search_placeholder" }}"
+                   data-blog-search-input>
+            <button type="button"
+                    class="search-box__clear"
+                    data-blog-search-clear
+                    hidden>
+              {{- partial "icon.html" "x-circle" -}}
+              <span class="sr-only">{{ i18n "blog_search_clear" }}</span>
+            </button>
+          </div>
+
+          {{- if $terms -}}
+            <ul class="tag-cloud tag-cloud--compact" aria-label="{{ i18n "blog_tags_label" }}">
+              {{- range $terms.ByCount -}}
+                <li>
+                  <a class="tag-chip" href="{{ .Page.RelPermalink }}">
+                    {{- partial "icon.html" "tag" -}}
+                    <span>{{ partial "term-label.html" .Page.Title }}</span>
+                    <span class="tag-chip__count">{{ .Count }}</span>
+                  </a>
+                </li>
+              {{- end -}}
+            </ul>
+          {{- end -}}
+
+          <output class="blog-controls__status"
+                  data-blog-search-status
+                  hidden></output>
+        </search>
+      </aside>
+
+      <div class="blog-layout__main">
+
+        <p class="post-count post-count--spread">
+          <span class="post-count__group">
+            <span class="post-count__num">{{ len $posts }}</span>
+            <span class="post-count__label">{{ i18n "home_section_blog_stat_total" }}</span>
+          </span>
+          <a href="{{ "/blog/index.xml" | relLangURL }}" class="feed-btn">
+            {{- partial "icon.html" "rss" -}}
+            <span>{{ i18n "blog_rss" }}</span>
+          </a>
+        </p>
+
+        <ul class="post-list post-list--results" data-blog-search-results hidden></ul>
+
+        {{- $paginator := .Paginator -}}
+        <div data-blog-search-default>
+          <ul class="post-list">
+            {{- range $paginator.Pages -}}
+              <li class="post-list__item">
+                <div class="post-list__meta">
+                  {{- partial "post-meta-items.html" . -}}
+                </div>
+                <h2 class="post-list__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+                {{- with .Description -}}
+                  <p class="post-list__excerpt">{{ . }}</p>
+                {{- else -}}
+                  <p class="post-list__excerpt">{{ .Summary | plainify | truncate 200 }}</p>
+                {{- end -}}
+                {{- partial "post-tags.html" . -}}
+              </li>
+            {{- end -}}
+          </ul>
+
+          {{- partial "pagination.html" (dict "p" $paginator "showCurrent" true) -}}
+        </div>
+      </div>
+    </div>
+  {{- else -}}
+    <p class="page-header__subtitle">{{ i18n "blog_empty" }}</p>
+  {{- end -}}
+</div>
+{{ end }}

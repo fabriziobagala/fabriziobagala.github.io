@@ -1,0 +1,40 @@
+{{ define "main" }}
+
+{{- $posts := .Pages -}}
+<div class="container">
+  <header class="page-header">
+    <p class="page-header__eyebrow">{{ i18n "eyebrow_tags" }}</p>
+    <h1 class="page-header__title">{{ partial "term-title.html" .Title }}</h1>
+    <p class="page-header__subtitle">
+      {{ i18n "tags_post_count" (dict "count" (len $posts)) }}
+    </p>
+  </header>
+
+  {{- if $posts -}}
+    {{- $paginator := .Paginator -}}
+    <ul class="post-list post-list--grid">
+      {{- range $paginator.Pages -}}
+        <li class="post-list__item">
+          <div class="post-list__meta">
+            {{- partial "post-meta-items.html" . -}}
+          </div>
+          <h2 class="post-list__title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+          {{- with .Description -}}
+            <p class="post-list__excerpt">{{ . }}</p>
+          {{- else -}}
+            <p class="post-list__excerpt">{{ .Summary | plainify | truncate 200 }}</p>
+          {{- end -}}
+          {{- partial "post-tags.html" . -}}
+        </li>
+      {{- end -}}
+    </ul>
+
+    {{- partial "pagination.html" (dict "p" $paginator) -}}
+  {{- end -}}
+
+  <div class="tag-page-nav">
+    <a href="{{ "/tags/" | relLangURL }}" class="post__back">← {{ i18n "tags_title" }}</a>
+    <a href="{{ "/blog/" | relLangURL }}" class="post__back">{{ i18n "tags_back_to_blog" }} →</a>
+  </div>
+</div>
+{{ end }}

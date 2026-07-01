@@ -1,0 +1,39 @@
+<div class="tool-studio tool-studio--split" data-b64-mode="encode">
+  <div class="tool-studio__actions" role="toolbar" aria-label="{{ i18n "tools_options" }}">
+    <div class="toolbar-group toolbar-group--options">
+      <div class="field field--inline">
+        <span class="field__label">{{ i18n "tools_mode" }}</span>
+        <fieldset class="tool-studio__views">
+          <legend class="sr-only">{{ i18n "tools_mode" }}</legend>
+          <button class="tool-studio__view-btn is-active" type="button" aria-pressed="true" data-mode="encode">{{ i18n "tools_encode" }}</button>
+          <button class="tool-studio__view-btn" type="button" aria-pressed="false" data-mode="decode">{{ i18n "tools_decode" }}</button>
+        </fieldset>
+      </div>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_b64_urlsafe_hint" }}"><input id="b64-urlsafe" type="checkbox" aria-describedby="b64-urlsafe-hint"><span>{{ i18n "tools_b64_urlsafe" }}</span></label><span id="b64-urlsafe-hint" class="sr-only">{{ i18n "tools_b64_urlsafe_hint" }}</span>
+    </div>
+
+    <div class="toolbar-group toolbar-group--end">
+      <button id="b64-clear-btn" class="toolbar-btn toolbar-btn--ghost" type="button" data-tooltip="{{ i18n "tools_clear_hint" }}">
+        {{ partial "icon.html" "x-circle" }}<span>{{ i18n "tools_clear" }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tool-studio__grid">
+    <section class="tool-studio__pane" aria-labelledby="b64-in-label">
+      <div class="tool-studio__pane-head">
+        <span id="b64-in-label" class="tool-studio__pane-title" data-b64-in-title>{{ i18n "tools_text" }}</span>
+        <output id="b64-validity" class="tool-studio__validity" aria-live="polite" data-state="empty"></output>
+      </div>
+      {{- partial "textarea-numbered.html" (dict "id" "b64-input" "labelledby" "b64-in-label" "placeholder" "Hello, world") -}}
+    </section>
+
+    <section class="tool-studio__pane" aria-labelledby="b64-out-label">
+      <div class="tool-studio__pane-head">
+        <span id="b64-out-label" class="tool-studio__pane-title" data-b64-out-title>{{ i18n "tools_base64" }}</span>
+        {{- partial "tools/tool-copy.html" (dict "target" "b64-output" "labelledby" "b64-out-label") -}}
+      </div>
+      {{- partial "textarea-numbered.html" (dict "id" "b64-output" "labelledby" "b64-out-label" "readonly" true) -}}
+    </section>
+  </div>
+</div>

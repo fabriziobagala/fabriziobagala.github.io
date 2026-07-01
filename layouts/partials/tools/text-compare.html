@@ -1,0 +1,115 @@
+<div class="tool-studio tool-studio--split">
+  <div class="tool-studio__actions" role="toolbar" aria-label="{{ i18n "tools_options" }}">
+    <div class="toolbar-group toolbar-group--options">
+      <label class="checkbox" data-tooltip="{{ i18n "tools_case_sensitive_hint" }}"><input id="case-sensitive" type="checkbox" aria-describedby="case-sensitive-hint"><span>{{ i18n "tools_case_sensitive" }}</span></label><span id="case-sensitive-hint" class="sr-only">{{ i18n "tools_case_sensitive_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_ignore_whitespace_hint" }}"><input id="ignore-whitespace" type="checkbox" aria-describedby="ignore-whitespace-hint"><span>{{ i18n "tools_ignore_whitespace" }}</span></label><span id="ignore-whitespace-hint" class="sr-only">{{ i18n "tools_ignore_whitespace_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_ignore_empty_lines_hint" }}"><input id="ignore-empty-lines" type="checkbox" aria-describedby="ignore-empty-lines-hint"><span>{{ i18n "tools_ignore_empty_lines" }}</span></label><span id="ignore-empty-lines-hint" class="sr-only">{{ i18n "tools_ignore_empty_lines_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_ignore_punctuation_hint" }}"><input id="ignore-punctuation" type="checkbox" aria-describedby="ignore-punctuation-hint"><span>{{ i18n "tools_ignore_punctuation" }}</span></label><span id="ignore-punctuation-hint" class="sr-only">{{ i18n "tools_ignore_punctuation_hint" }}</span>
+      <label class="checkbox" data-tooltip="{{ i18n "tools_trim_lines_hint" }}"><input id="trim-lines" type="checkbox" aria-describedby="trim-lines-hint"><span>{{ i18n "tools_trim_lines" }}</span></label><span id="trim-lines-hint" class="sr-only">{{ i18n "tools_trim_lines_hint" }}</span>
+    </div>
+
+    <div class="toolbar-group toolbar-group--end">
+      <button id="compare-btn" class="toolbar-btn" type="button" data-tooltip="{{ i18n "tools_compare_hint" }}">
+        {{ partial "icon.html" "arrows-exchange" }}<span>{{ i18n "tools_compare" }}</span>
+      </button>
+      <button id="clear-compare" class="toolbar-btn toolbar-btn--ghost" type="button" data-tooltip="{{ i18n "tools_clear_hint" }}">
+        {{ partial "icon.html" "x-circle" }}<span>{{ i18n "tools_clear" }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tool-studio__grid">
+    <section class="tool-studio__pane" aria-labelledby="text-compare-a-label">
+      <div class="tool-studio__pane-head">
+        <span id="text-compare-a-label" class="tool-studio__pane-title">{{ i18n "tools_text_a" }}</span>
+      </div>
+      <div class="compare-pane" data-mode="input">
+        {{- partial "textarea-numbered.html" (dict "id" "text1-input" "labelledby" "text-compare-a-label" "run" "compare-btn") -}}
+        <div id="text1-output" class="diff-output"></div>
+      </div>
+    </section>
+
+    <section class="tool-studio__pane" aria-labelledby="text-compare-b-label">
+      <div class="tool-studio__pane-head">
+        <span id="text-compare-b-label" class="tool-studio__pane-title">{{ i18n "tools_text_b" }}</span>
+      </div>
+      <div class="compare-pane" data-mode="input">
+        {{- partial "textarea-numbered.html" (dict "id" "text2-input" "labelledby" "text-compare-b-label" "run" "compare-btn") -}}
+        <div id="text2-output" class="diff-output"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<output id="compare-status" class="tool-status" aria-live="polite" hidden></output>
+
+<div id="compare-stats" class="diff-dashboard" style="display:none;">
+  <div class="diff-dashboard__chart">
+    <svg viewBox="0 0 42 42" class="donut" aria-hidden="true" focusable="false">
+      <circle class="donut__track" cx="21" cy="21" r="15.9155"></circle>
+      <circle id="donut-equal" class="donut__ring donut__ring--equal" cx="21" cy="21" r="15.9155" stroke-dasharray="0 100" stroke-dashoffset="0"></circle>
+      <circle id="donut-added" class="donut__ring donut__ring--added" cx="21" cy="21" r="15.9155" stroke-dasharray="0 100" stroke-dashoffset="0"></circle>
+      <circle id="donut-deleted" class="donut__ring donut__ring--deleted" cx="21" cy="21" r="15.9155" stroke-dasharray="0 100" stroke-dashoffset="0"></circle>
+      <circle id="donut-modified" class="donut__ring donut__ring--modified" cx="21" cy="21" r="15.9155" stroke-dasharray="0 100" stroke-dashoffset="0"></circle>
+    </svg>
+    <div class="donut__center">
+      <div id="similarity-percentage" class="donut__value">0%</div>
+      <div class="donut__label">{{ i18n "tools_similarity" }}</div>
+    </div>
+  </div>
+  <div class="diff-dashboard__lists">
+    <ul class="diff-list">
+      <li class="diff-list__item">
+        <span class="diff-list__indicator">
+          <span class="diff-dot diff-dot--equal" aria-hidden="true"></span>
+          <span class="diff-list__label">{{ i18n "tools_equal_chars" }}</span>
+        </span>
+        <span id="equal-chars-count" class="diff-list__value">0</span>
+      </li>
+      <li class="diff-list__item">
+        <span class="diff-list__indicator">
+          <span class="diff-dot diff-dot--added" aria-hidden="true"></span>
+          <span class="diff-list__label">{{ i18n "tools_additions" }}</span>
+        </span>
+        <span id="additions-count" class="diff-list__value">0</span>
+      </li>
+      <li class="diff-list__item">
+        <span class="diff-list__indicator">
+          <span class="diff-dot diff-dot--deleted" aria-hidden="true"></span>
+          <span class="diff-list__label">{{ i18n "tools_deletions" }}</span>
+        </span>
+        <span id="deletions-count" class="diff-list__value">0</span>
+      </li>
+      <li class="diff-list__item">
+        <span class="diff-list__indicator">
+          <span class="diff-dot diff-dot--modified" aria-hidden="true"></span>
+          <span class="diff-list__label">{{ i18n "tools_modifications" }}</span>
+        </span>
+        <span id="modifications-count" class="diff-list__value">0</span>
+      </li>
+    </ul>
+    <ul class="diff-list">
+      <li class="diff-list__item">
+        <span class="diff-list__indicator">
+          <span class="diff-dot diff-dot--added" aria-hidden="true"></span>
+          <span class="diff-list__label">{{ i18n "tools_line_additions" }}</span>
+        </span>
+        <span id="line-additions-count" class="diff-list__value">0</span>
+      </li>
+      <li class="diff-list__item">
+        <span class="diff-list__indicator">
+          <span class="diff-dot diff-dot--deleted" aria-hidden="true"></span>
+          <span class="diff-list__label">{{ i18n "tools_line_deletions" }}</span>
+        </span>
+        <span id="line-deletions-count" class="diff-list__value">0</span>
+      </li>
+      <li class="diff-list__item">
+        <span class="diff-list__indicator">
+          <span class="diff-dot diff-dot--modified" aria-hidden="true"></span>
+          <span class="diff-list__label">{{ i18n "tools_line_modifications" }}</span>
+        </span>
+        <span id="line-modifications-count" class="diff-list__value">0</span>
+      </li>
+    </ul>
+  </div>
+</div>

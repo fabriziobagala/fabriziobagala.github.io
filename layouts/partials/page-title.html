@@ -1,0 +1,10 @@
+{{- $is404 := eq .Kind "404" -}}
+{{- $title := "" -}}
+{{- if $is404 -}}
+  {{- $title = i18n "eyebrow_404" -}}
+{{- else if eq .Kind "term" -}}
+  {{- $title = i18n "tags_page_title" (dict "term" (partial "term-title.html" .Title)) -}}
+{{- else -}}
+  {{- $title = .LinkTitle | default .Title -}}
+{{- end -}}
+{{- return (cond .IsHome site.Title (printf "%s - %s" $title site.Title)) -}}

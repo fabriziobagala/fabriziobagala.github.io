@@ -1,0 +1,21 @@
+{{- $id := .Get "id" | default (.Get 0) -}}
+{{- if not $id -}}
+  {{- errorf "youtube shortcode in %s: missing video id" .Position -}}
+{{- end -}}
+{{- $title := .Get "title" | default "YouTube video player" -}}
+{{- $caption := .Get "caption" -}}
+{{- $params := slice "rel=0" -}}
+{{- with .Get "start" -}}{{ $params = $params | append (printf "start=%s" .) }}{{- end -}}
+{{- $qs := delimit $params "&amp;" -}}
+<figure class="youtube">
+  <div class="youtube__frame">
+    <iframe
+      src="https://www.youtube-nocookie.com/embed/{{ $id | safeURL }}?{{ $qs | safeURL }}"
+      title="{{ $title }}"
+      loading="lazy"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen></iframe>
+  </div>
+  {{- with $caption -}}<figcaption>{{ . | markdownify }}</figcaption>{{- end -}}
+</figure>

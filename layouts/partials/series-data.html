@@ -1,0 +1,18 @@
+{{- $result := dict -}}
+{{- $slug := .Params.series -}}
+{{- if $slug -}}
+  {{- $section := where site.RegularPages "Section" "blog" -}}
+  {{- $parts := where $section "Params.series" $slug -}}
+  {{- $parts = sort $parts ".Params.series_part" "asc" -}}
+  {{- $currentIndex := -1 -}}
+  {{- range $i, $p := $parts -}}
+    {{- if eq $p.RelPermalink $.RelPermalink -}}{{ $currentIndex = $i }}{{- end -}}
+  {{- end -}}
+  {{- $result = dict
+        "slug" $slug
+        "name" (.Params.series_title | default $slug)
+        "parts" $parts
+        "total" (len $parts)
+        "currentIndex" $currentIndex -}}
+{{- end -}}
+{{- return $result -}}
