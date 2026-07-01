@@ -1,7 +1,7 @@
 <header class="site-header" data-site-header data-mobile-open="false">
   <div class="container isle">
     <div class="isle__bar">
-      <a href="{{ "/" | relLangURL }}" class="brand">
+      <div class="brand">
         {{- with resources.Get "images/logo.svg" -}}
           {{- $svg := .Content -}}
           {{- $svg = replaceRE `(<svg\b[^>]*?)\s+width="[^"]*"` "$1" $svg -}}
@@ -10,7 +10,7 @@
           {{- $svg | safeHTML -}}
         {{- end -}}
         <span class="brand__name">Fabrizio Bagalà</span>
-      </a>
+      </div>
 
       <nav class="nav" aria-label="{{ i18n "nav_primary" }}">
 
