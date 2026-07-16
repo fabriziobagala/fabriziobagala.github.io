@@ -702,7 +702,12 @@
   word-break: break-word;
 }
 
-.tool-status[hidden] {
+.tool-status:empty {
+  padding: 0;
+  border: 0;
+}
+
+.tool-status:empty::before {
   display: none;
 }
 

@@ -732,19 +732,17 @@ globalThis.ToolStatus = {
    */
   set(el, msg, kind) {
     if (!el) return;
-    el.hidden = false;
     el.textContent = msg;
     el.classList.toggle('tool-status--success', kind === 'success');
     el.classList.toggle('tool-status--error', kind === 'error');
   },
   /**
-   * Hides and clears a status element.
+   * Empties a status element and removes its state styling.
    * @param {HTMLElement} el - The status element.
    * @returns {void}
    */
   clear(el) {
     if (!el) return;
-    el.hidden = true;
     el.textContent = '';
     el.classList.remove('tool-status--success', 'tool-status--error');
   },
