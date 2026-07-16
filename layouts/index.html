@@ -4,10 +4,14 @@
 {{- $sorted := $posts.ByDate.Reverse -}}
 {{- $latest5 := first 5 $sorted -}}
 {{- $latestPost := false -}}{{- if gt (len $sorted) 0 }}{{ $latestPost = index $sorted 0 }}{{ end -}}
-{{- $pf := site.GetPage "/portfolio" -}}
-{{- $featured := $pf.Params.featured -}}
-{{- $pfProjects := $pf.Params.projects -}}
-{{- $pfCategories := $pf.Params.categories -}}
+{{- $featured := false -}}
+{{- $pfProjects := slice -}}
+{{- $pfCategories := slice -}}
+{{- with site.GetPage "/portfolio" -}}
+  {{- $featured = .Params.featured -}}
+  {{- $pfProjects = .Params.projects | default slice -}}
+  {{- $pfCategories = .Params.categories | default slice -}}
+{{- end -}}
 
 <div class="landing container">
 

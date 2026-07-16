@@ -6,7 +6,6 @@ enableEmoji = false
 canonifyURLs = false
 disableKinds = []
 summaryLength = 30
-enableGitInfo = true
 
 [frontmatter]
   lastmod = ['lastmod', 'date']
