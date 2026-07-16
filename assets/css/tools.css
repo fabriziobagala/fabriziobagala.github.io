@@ -699,7 +699,7 @@
   font-family: var(--font-sans);
   font-size: var(--fs-sm);
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .tool-status:empty {
@@ -774,7 +774,7 @@
   border: 1px solid var(--border);
   border-radius: var(--rad-md);
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   line-height: 1.55;
   overflow-y: auto;
   max-height: 480px;

@@ -32,7 +32,7 @@ const bytesToBase64 = (bytes) => {
  * @param {string} b64 - The standard Base64 string.
  * @returns {string} The URL-safe Base64 string without padding.
  */
-const toUrlSafe = (b64) => b64.replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+const toUrlSafe = (b64) => b64.replaceAll('+', '-').replaceAll('/', '_').replace(/={1,2}$/, '');
 
 /**
  * Converts a URL-safe Base64 string back to the standard padded variant.

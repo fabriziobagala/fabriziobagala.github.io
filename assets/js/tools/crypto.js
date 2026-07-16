@@ -166,7 +166,7 @@ const computeDigest = (algorithm, text, key) => {
  */
 const encodeDigest = (bytes, encoding, uppercase) => {
     if (encoding === 'base64') return bytesToBase64(bytes);
-    if (encoding === 'base64url') return bytesToBase64(bytes).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+    if (encoding === 'base64url') return bytesToBase64(bytes).replaceAll('+', '-').replaceAll('/', '_').replace(/={1,2}$/, '');
     const hex = toHex(bytes);
     return uppercase ? hex.toUpperCase() : hex;
 };

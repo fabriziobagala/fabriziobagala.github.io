@@ -1123,7 +1123,8 @@ const PostShare = (() => {
    */
   const normaliseInstance = (raw) => {
     if (!raw) return '';
-    return String(raw).trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '').toLowerCase();
+    const host = String(raw).trim().replace(/^https?:\/\//i, '');
+    return (host.split('/')[0] || '').toLowerCase();
   };
 
   /**
