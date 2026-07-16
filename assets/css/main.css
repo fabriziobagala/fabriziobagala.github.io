@@ -2026,6 +2026,10 @@ a.card:hover {
   display: block;
 }
 
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
 .stack-popover {
   padding: 0;
   border: 1px solid var(--border);
@@ -2050,6 +2054,7 @@ a.card:hover {
   gap: var(--sp-4);
   max-height: 80dvh;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .stack-popover__header {
