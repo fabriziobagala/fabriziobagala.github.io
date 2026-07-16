@@ -301,6 +301,8 @@ pre {
   background: #2d2d2d;
   border-bottom: 1px solid #3c3c3c;
   color: #cccccc;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .highlight__lang {
