@@ -1,7 +1,7 @@
 # fabriziobagala.com
 
 [![Deploy](https://img.shields.io/github/actions/workflow/status/fabriziobagala/fabriziobagala.github.io/hugo.yml?branch=main&style=for-the-badge&logo=github&label=Deploy)](https://github.com/fabriziobagala/fabriziobagala.github.io/actions/workflows/hugo.yml)
-![Hugo](https://img.shields.io/badge/Hugo-0.163.3%20extended-ff4088?style=for-the-badge&logo=hugo&logoColor=white)
+![Hugo](https://img.shields.io/badge/Hugo-0.164.0%20extended-ff4088?style=for-the-badge&logo=hugo&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 Source code for my personal website: a portfolio, a technical blog, and a small set of browser-based developer tools. Built with [Hugo](https://gohugo.io/) and hand-written layouts, no external theme, and deployed to GitHub Pages.
@@ -28,10 +28,10 @@ Source code for my personal website: a portfolio, a technical blog, and a small 
 
 ## Tech stack
 
-- [Hugo Extended](https://gohugo.io/) v0.163.3 (static site generator)
+- [Hugo Extended](https://gohugo.io/) v0.164.0 (static site generator)
 - Plain HTML, CSS and vanilla JavaScript, bundled and fingerprinted by Hugo Pipes
-- [KaTeX](https://katex.org/) for math, [js-yaml](https://github.com/nodeca/js-yaml) for the YAML tool
-- Icons from [Font Awesome](https://fontawesome.com/) Free 7.3.0 (self-hosted SVGs)
+- [KaTeX](https://katex.org/) for math, [js-yaml](https://github.com/nodeca/js-yaml) for the JSON tool's YAML view
+- Icons from [Font Awesome](https://fontawesome.com/) Free 7.3.1 (self-hosted SVGs)
 - GitHub Actions and GitHub Pages for build and deploy
 
 ## Project structure
@@ -52,7 +52,7 @@ Source code for my personal website: a portfolio, a technical blog, and a small 
 
 ### Prerequisites
 
-- [Hugo Extended](https://gohugo.io/installation/) v0.163.3 (the version used in CI; the Extended build is required for the asset pipeline)
+- [Hugo Extended](https://gohugo.io/installation/) v0.164.0 (the version used in CI; the Extended build is required for the asset pipeline)
 
 ### Run locally
 
