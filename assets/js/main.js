@@ -452,9 +452,11 @@ const BlogSearch = (() => {
    */
   const fetchIndex = (url, labels) =>
     fetch(url, { credentials: 'same-origin' })
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => (data || []).map(attachLabels(labels)))
-      .catch(() => []);
+      .then((r) => {
+        if (!r.ok) throw new Error(`index fetch failed: ${r.status}`);
+        return r.json();
+      })
+      .then((data) => (data || []).map(attachLabels(labels)));
 
   /**
    * Wires the blog search input, clear button and lazy index loading.
@@ -475,6 +477,7 @@ const BlogSearch = (() => {
       minutesRead: root.dataset.minutesLabel || '',
     };
     const noResultsText = root.dataset.noResults || 'No results.';
+    const searchErrorText = root.dataset.searchError || 'Search is unavailable right now. Try again.';
     const resultsCountTpl = root.dataset.resultsCount || '__N__';
     const indexURL = root.dataset.indexUrl;
 
@@ -489,6 +492,9 @@ const BlogSearch = (() => {
         state.pending = fetchIndex(indexURL, labels).then((data) => {
           state.posts = data;
           return data;
+        }).catch((err) => {
+          state.pending = null;
+          throw err;
         });
       }
       return state.pending;
@@ -530,14 +536,34 @@ const BlogSearch = (() => {
     };
 
     /**
-     * Reads the input, loads the index and renders matching results.
+     * Shows the search-unavailable error status for the results area.
+     * @returns {void}
+     */
+    const showSearchError = () => {
+      defaultView.hidden = true;
+      results.hidden = false;
+      results.innerHTML = '';
+      status.textContent = searchErrorText;
+      status.hidden = false;
+    };
+
+    /**
+     * Reads the input, loads the index and renders matching results, ignoring
+     * responses that arrive after the input has changed.
      * @returns {void}
      */
     const runSearch = () => {
       const raw = input.value.trim();
       if (!raw) { showDefault(); return; }
       const query = normalise(raw);
-      loadIndex().then(() => showResults(query));
+      loadIndex().then(() => {
+        if (normalise(input.value.trim()) !== query) return;
+        showResults(query);
+      }).catch((err) => {
+        console.debug('BlogSearch: index load failed', err);
+        if (normalise(input.value.trim()) !== query) return;
+        showSearchError();
+      });
     };
 
     let timer = null;
