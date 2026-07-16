@@ -1227,6 +1227,35 @@ const InputModality = (() => {
 })();
 
 /**
+ * Lets keyboard users dismiss the CSS tooltips with Escape, per WCAG 1.4.13.
+ */
+const Tooltips = (() => {
+  /**
+   * Wires the Escape dismissal and its reset on hover/focus leaving a tooltip.
+   * @returns {void}
+   */
+  const init = () => {
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      document.documentElement.classList.add('tooltips-dismissed');
+    });
+    /**
+     * Re-enables tooltips once hover or focus leaves a tooltip element.
+     * @param {Event} e - The mouseout or focusout event.
+     * @returns {void}
+     */
+    const clear = (e) => {
+      if (e.target instanceof Element && e.target.closest('[data-tooltip]')) {
+        document.documentElement.classList.remove('tooltips-dismissed');
+      }
+    };
+    document.addEventListener('mouseout', clear, true);
+    document.addEventListener('focusout', clear, true);
+  };
+
+  return { init };
+})();
+
 /**
  * Syncs the portfolio category filter to the URL hash.
  */
@@ -1259,6 +1288,7 @@ document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   MobileNav.init();
   InputModality.init();
+  Tooltips.init();
   PortfolioFilter.init();
   NavIndicator.init();
   ContactPanes.init();

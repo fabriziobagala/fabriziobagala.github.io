@@ -980,6 +980,10 @@ main>*:last-child {
   translate: -50% 0;
 }
 
+html.tooltips-dismissed [data-tooltip]::after {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .icon-btn[data-tooltip]::after {
     transition: opacity var(--transition);
