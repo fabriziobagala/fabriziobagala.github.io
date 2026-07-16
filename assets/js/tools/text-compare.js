@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Wires up the text comparison tool: caches DOM nodes, builds the character and line diff engine, renders the diff output, statistics and donut chart, and binds compare/clear/option event handlers.
+ * Wires up the text comparison tool: caches DOM nodes, builds the line-first diff engine (line-level diff with character-level refinement inside modified line pairs), renders the diff output, statistics and donut chart, and binds compare/clear/option event handlers.
  * @returns {void}
  */
 const initTextCompare = () => {
@@ -38,22 +38,23 @@ const initTextCompare = () => {
     }
 
     /**
-     * Normalizes text for character-level diffing and display according to the active options.
-     * @param {string} text - The raw input text.
-     * @param {Object} options - The active comparison options.
-     * @returns {string} The transformed text.
+     * Returns the text comparison tool's i18n string map, or an empty object when unavailable.
+     * @returns {Object} The i18n string map.
      */
-    const transformDisplay = (text, options) => {
-        let t = text;
-        if (options.trimLines) t = t.split('\n').map((l) => l.trim()).join('\n');
-        if (options.ignoreEmptyLines) t = t.split('\n').filter((l) => l.length > 0).join('\n');
-        if (options.ignorePunctuation) t = t.replaceAll(/[\p{P}\p{S}]/gu, '');
-        if (options.ignoreWhitespace) t = t.replaceAll(/\s/g, '');
-        return t;
-    };
+    const i18n = () => globalThis.toolsI18n?.textCompare || {};
 
     /**
-     * Normalizes text for line-level diffing according to the active options, preserving newlines.
+     * Returns the screen-reader prefix labels for changed diff runs.
+     * @returns {Object} Labels keyed by added, deleted and modified.
+     */
+    const srLabels = () => ({
+        added: i18n().srAdded || 'added:',
+        deleted: i18n().srDeleted || 'deleted:',
+        modified: i18n().srModified || 'modified:'
+    });
+
+    /**
+     * Normalizes text for line-based diffing and display according to the active options, preserving newlines.
      * @param {string} text - The raw input text.
      * @param {Object} options - The active comparison options.
      * @returns {string} The transformed text.
@@ -94,17 +95,17 @@ const initTextCompare = () => {
     /**
      * Fills an edit-distance matrix in place using the Levenshtein recurrence.
      * @param {Array<Array<number>>} matrix - The matrix to populate.
-     * @param {Array<string>|string} str1 - The first sequence.
-     * @param {Array<string>|string} str2 - The second sequence.
+     * @param {Array<string>} seq1 - The first sequence.
+     * @param {Array<string>} seq2 - The second sequence.
      * @returns {void}
      */
-    const fillDiffMatrix = (matrix, str1, str2) => {
-        const len1 = str1.length;
-        const len2 = str2.length;
+    const fillDiffMatrix = (matrix, seq1, seq2) => {
+        const len1 = seq1.length;
+        const len2 = seq2.length;
 
         for (let i = 1; i <= len1; i++) {
             for (let j = 1; j <= len2; j++) {
-                if (str1[i - 1] === str2[j - 1]) {
+                if (seq1[i - 1] === seq2[j - 1]) {
                     matrix[i][j] = matrix[i - 1][j - 1];
                 } else {
                     matrix[i][j] = Math.min(
@@ -120,38 +121,38 @@ const initTextCompare = () => {
     /**
      * Determines the diff operation that produced the matrix cell at the given position.
      * @param {Array<Array<number>>} matrix - The filled edit-distance matrix.
-     * @param {Array<string>|string} str1 - The first sequence.
-     * @param {Array<string>|string} str2 - The second sequence.
+     * @param {Array<string>} seq1 - The first sequence.
+     * @param {Array<string>} seq2 - The second sequence.
      * @param {number} i - The current row index in the first sequence.
      * @param {number} j - The current column index in the second sequence.
-     * @returns {Object} An operation descriptor with a type and the relevant characters and positions.
+     * @returns {Object} An operation descriptor with a type.
      */
-    const getNextOperation = (matrix, str1, str2, i, j) => {
-        if (i > 0 && j > 0 && str1[i - 1] === str2[j - 1]) {
-            return { type: 'equal', char1: str1[i - 1], char2: str2[j - 1], pos1: i - 1, pos2: j - 1 };
+    const getNextOperation = (matrix, seq1, seq2, i, j) => {
+        if (i > 0 && j > 0 && seq1[i - 1] === seq2[j - 1]) {
+            return { type: 'equal' };
         } else if (i > 0 && (j === 0 || matrix[i][j] === matrix[i - 1][j] + 1)) {
-            return { type: 'delete', char1: str1[i - 1], pos1: i - 1, pos2: j };
+            return { type: 'delete' };
         } else if (j > 0 && (i === 0 || matrix[i][j] === matrix[i][j - 1] + 1)) {
-            return { type: 'insert', char2: str2[j - 1], pos1: i, pos2: j - 1 };
+            return { type: 'insert' };
         } else {
-            return { type: 'substitute', char1: str1[i - 1], char2: str2[j - 1], pos1: i - 1, pos2: j - 1 };
+            return { type: 'substitute' };
         }
     };
 
     /**
      * Backtracks through a filled matrix to produce the ordered list of diff operations.
      * @param {Array<Array<number>>} matrix - The filled edit-distance matrix.
-     * @param {Array<string>|string} str1 - The first sequence.
-     * @param {Array<string>|string} str2 - The second sequence.
+     * @param {Array<string>} seq1 - The first sequence.
+     * @param {Array<string>} seq2 - The second sequence.
      * @returns {Array<Object>} The ordered diff operations.
      */
-    const backtrackOperations = (matrix, str1, str2) => {
+    const backtrackOperations = (matrix, seq1, seq2) => {
         const operations = [];
-        let i = str1.length;
-        let j = str2.length;
+        let i = seq1.length;
+        let j = seq2.length;
 
         while (i > 0 || j > 0) {
-            const operation = getNextOperation(matrix, str1, str2, i, j);
+            const operation = getNextOperation(matrix, seq1, seq2, i, j);
             operations.unshift(operation);
 
             if (operation.type === 'equal' || operation.type === 'substitute') {
@@ -170,70 +171,35 @@ const initTextCompare = () => {
     const MAX_MATRIX_CELLS = 9_000_000;
 
     /**
-     * Computes the character-level diff operations between two strings.
-     * @param {string} str1 - The first string.
-     * @param {string} str2 - The second string.
+     * Computes the diff operations between two sequences.
+     * @param {Array<string>} seq1 - The first sequence.
+     * @param {Array<string>} seq2 - The second sequence.
      * @returns {Array<Object>} The ordered diff operations.
      * @throws {Error} When the resulting matrix would exceed the maximum allowed cell count.
      */
-    const computeDiff = (str1, str2) => {
-        const a = Array.from(str1);
-        const b = Array.from(str2);
-        if ((a.length + 1) * (b.length + 1) > MAX_MATRIX_CELLS) {
-            const msg = globalThis.toolsI18n?.textCompare?.errorTooLarge || 'Inputs are too large to compare';
+    const computeDiff = (seq1, seq2) => {
+        if ((seq1.length + 1) * (seq2.length + 1) > MAX_MATRIX_CELLS) {
+            const msg = i18n().errorTooLarge || 'Inputs are too large to compare';
             throw new Error(msg);
         }
-        const matrix = createDiffMatrix(a.length, b.length);
-        fillDiffMatrix(matrix, a, b);
-        return backtrackOperations(matrix, a, b);
+        const matrix = createDiffMatrix(seq1.length, seq2.length);
+        fillDiffMatrix(matrix, seq1, seq2);
+        return backtrackOperations(matrix, seq1, seq2);
     };
 
     /**
-     * Renders character diff operations into paired HTML markup and tallies the change counts.
-     * @param {Array<Object>} operations - The diff operations.
-     * @param {string} originalText1 - The display text for the first pane.
-     * @param {string} originalText2 - The display text for the second pane.
-     * @returns {Object} An object with html1, html2, additions, deletions and modifications.
+     * Groups consecutive diff operations of the same type into runs.
+     * @param {Array<Object>} operations - The ordered diff operations.
+     * @returns {Array<Object>} Runs with a type and a length.
      */
-    const renderDiff = (operations, originalText1, originalText2) => {
-        const chars1 = Array.from(originalText1);
-        const chars2 = Array.from(originalText2);
-        let html1 = '';
-        let html2 = '';
-        let pos1 = 0, pos2 = 0;
-        let additions = 0, deletions = 0, modifications = 0;
-
+    const groupOperations = (operations) => {
+        const runs = [];
         operations.forEach((op) => {
-            switch (op.type) {
-                case 'equal':
-                    html1 += `<span class="diff-equal">${escapeHtml(chars1[pos1])}</span>`;
-                    html2 += `<span class="diff-equal">${escapeHtml(chars2[pos2])}</span>`;
-                    pos1++;
-                    pos2++;
-                    break;
-                case 'delete':
-                    html1 += `<span class="diff-deleted">${escapeHtml(chars1[pos1])}</span>`;
-                    html2 += `<span class="diff-placeholder"></span>`;
-                    pos1++;
-                    deletions++;
-                    break;
-                case 'insert':
-                    html1 += `<span class="diff-placeholder"></span>`;
-                    html2 += `<span class="diff-added">${escapeHtml(chars2[pos2])}</span>`;
-                    pos2++;
-                    additions++;
-                    break;
-                case 'substitute':
-                    html1 += `<span class="diff-modified">${escapeHtml(chars1[pos1])}</span>`;
-                    html2 += `<span class="diff-modified">${escapeHtml(chars2[pos2])}</span>`;
-                    pos1++;
-                    pos2++;
-                    modifications++;
-                    break;
-            }
+            const last = runs.at(-1);
+            if (last && last.type === op.type) last.length++;
+            else runs.push({ type: op.type, length: 1 });
         });
-
-        return { html1, html2, additions, deletions, modifications };
+        return runs;
     };
 
     /**
@@ -248,15 +214,158 @@ const initTextCompare = () => {
     };
 
     /**
-     * Computes the similarity percentage between the two sequences from their diff operations.
-     * @param {Array<Object>} operations - The diff operations.
-     * @returns {number} The similarity as an integer percentage.
+     * Renders a diff span for a run of text, prefixing changed runs with a visually hidden label.
+     * @param {string} className - The diff state class.
+     * @param {string} text - The run text.
+     * @param {string} srLabel - The screen-reader prefix; empty for equal runs.
+     * @returns {string} The span markup, or an empty string for empty text.
      */
-    const calculateSimilarity = (operations) => {
-        const equalOps = operations.filter((op) => op.type === 'equal').length;
-        const len1 = operations.filter((op) => op.type === 'equal' || op.type === 'delete' || op.type === 'substitute').length;
-        const len2 = operations.filter((op) => op.type === 'equal' || op.type === 'insert' || op.type === 'substitute').length;
-        return Math.round((equalOps / Math.max(len1, len2, 1)) * 100);
+    const renderRun = (className, text, srLabel) => {
+        if (!text) return '';
+        const sr = srLabel ? `<span class="sr-only">${escapeHtml(srLabel)} </span>` : '';
+        return `<span class="${className}">${sr}${escapeHtml(text)}</span>`;
+    };
+
+    /**
+     * Renders the placeholder span that keeps the opposite pane aligned.
+     * @returns {string} The placeholder markup.
+     */
+    const renderPlaceholder = () => '<span class="diff-placeholder"></span>';
+
+    /**
+     * Renders the character-level diff between one pair of modified lines and tallies change counts, falling back to whole-line modified rendering when the pair is too large.
+     * @param {string} line1 - The display line from the first text.
+     * @param {string} line2 - The display line from the second text.
+     * @param {Object} options - The active comparison options.
+     * @returns {Object} An object with html1, html2, additions, deletions, modifications and equal counts.
+     */
+    const renderModifiedLinePair = (line1, line2, options) => {
+        const sr = srLabels();
+        const chars1 = Array.from(line1);
+        const chars2 = Array.from(line2);
+        if ((chars1.length + 1) * (chars2.length + 1) > MAX_MATRIX_CELLS) {
+            return {
+                html1: renderRun('diff-modified', line1, sr.modified),
+                html2: renderRun('diff-modified', line2, sr.modified),
+                additions: 0,
+                deletions: 0,
+                modifications: Math.max(chars1.length, chars2.length),
+                equal: 0
+            };
+        }
+        const keys1 = chars1.map((c) => transformCompare(c, options));
+        const keys2 = chars2.map((c) => transformCompare(c, options));
+        const runs = groupOperations(computeDiff(keys1, keys2));
+
+        let html1 = '';
+        let html2 = '';
+        let pos1 = 0, pos2 = 0;
+        let additions = 0, deletions = 0, modifications = 0, equal = 0;
+
+        runs.forEach((run) => {
+            const n = run.length;
+            switch (run.type) {
+                case 'equal':
+                    html1 += renderRun('diff-equal', chars1.slice(pos1, pos1 + n).join(''), '');
+                    html2 += renderRun('diff-equal', chars2.slice(pos2, pos2 + n).join(''), '');
+                    pos1 += n;
+                    pos2 += n;
+                    equal += n;
+                    break;
+                case 'delete':
+                    html1 += renderRun('diff-deleted', chars1.slice(pos1, pos1 + n).join(''), sr.deleted);
+                    html2 += renderPlaceholder();
+                    pos1 += n;
+                    deletions += n;
+                    break;
+                case 'insert':
+                    html1 += renderPlaceholder();
+                    html2 += renderRun('diff-added', chars2.slice(pos2, pos2 + n).join(''), sr.added);
+                    pos2 += n;
+                    additions += n;
+                    break;
+                case 'substitute':
+                    html1 += renderRun('diff-modified', chars1.slice(pos1, pos1 + n).join(''), sr.modified);
+                    html2 += renderRun('diff-modified', chars2.slice(pos2, pos2 + n).join(''), sr.modified);
+                    pos1 += n;
+                    pos2 += n;
+                    modifications += n;
+                    break;
+            }
+        });
+
+        return { html1, html2, additions, deletions, modifications, equal };
+    };
+
+    /**
+     * Renders the full line diff into paired HTML markup and tallies character and line change counts.
+     * @param {Array<Object>} lineOps - The line-level diff operations.
+     * @param {Array<string>} lines1 - The display lines from the first text.
+     * @param {Array<string>} lines2 - The display lines from the second text.
+     * @param {Object} options - The active comparison options.
+     * @returns {Object} An object with html1, html2, hasChanges, character counts and similarity.
+     */
+    const renderLineDiff = (lineOps, lines1, lines2, options) => {
+        const sr = srLabels();
+        const parts1 = [];
+        const parts2 = [];
+        let i1 = 0, i2 = 0;
+        let additions = 0, deletions = 0, modifications = 0, equal = 0;
+        let hasChanges = false;
+
+        lineOps.forEach((op) => {
+            switch (op.type) {
+                case 'equal':
+                    parts1.push(renderRun('diff-equal', lines1[i1], ''));
+                    parts2.push(renderRun('diff-equal', lines2[i2], ''));
+                    equal += Array.from(lines1[i1]).length;
+                    i1++;
+                    i2++;
+                    break;
+                case 'delete':
+                    hasChanges = true;
+                    parts1.push(renderRun('diff-deleted', lines1[i1], sr.deleted) || renderPlaceholder());
+                    parts2.push(renderPlaceholder());
+                    deletions += Array.from(lines1[i1]).length;
+                    i1++;
+                    break;
+                case 'insert':
+                    hasChanges = true;
+                    parts1.push(renderPlaceholder());
+                    parts2.push(renderRun('diff-added', lines2[i2], sr.added) || renderPlaceholder());
+                    additions += Array.from(lines2[i2]).length;
+                    i2++;
+                    break;
+                case 'substitute': {
+                    hasChanges = true;
+                    const pair = renderModifiedLinePair(lines1[i1], lines2[i2], options);
+                    parts1.push(pair.html1);
+                    parts2.push(pair.html2);
+                    additions += pair.additions;
+                    deletions += pair.deletions;
+                    modifications += pair.modifications;
+                    equal += pair.equal;
+                    i1++;
+                    i2++;
+                    break;
+                }
+            }
+        });
+
+        const total1 = lines1.reduce((sum, l) => sum + Array.from(l).length, 0);
+        const total2 = lines2.reduce((sum, l) => sum + Array.from(l).length, 0);
+        const similarity = Math.round((equal / Math.max(total1, total2, 1)) * 100);
+
+        return {
+            html1: parts1.join('\n'),
+            html2: parts2.join('\n'),
+            hasChanges,
+            additions,
+            deletions,
+            modifications,
+            equal,
+            similarity
+        };
     };
 
     /**
@@ -277,25 +386,6 @@ const initTextCompare = () => {
     };
 
     /**
-     * Computes line-level diff statistics between two newline-separated strings.
-     * @param {string} compare1 - The first comparison string.
-     * @param {string} compare2 - The second comparison string.
-     * @returns {Object} An object with additions, deletions and modifications line counts.
-     */
-    const computeLineDiff = (compare1, compare2) => {
-        const lines1 = compare1.split('\n');
-        const lines2 = compare2.split('\n');
-        const matrix = createDiffMatrix(lines1.length, lines2.length);
-        fillDiffMatrix(matrix, lines1, lines2);
-        const ops = backtrackOperations(matrix, lines1, lines2);
-        return {
-            additions: ops.filter((o) => o.type === 'insert').length,
-            deletions: ops.filter((o) => o.type === 'delete').length,
-            modifications: ops.filter((o) => o.type === 'substitute').length
-        };
-    };
-
-    /**
      * Reads the current state of the comparison option checkboxes.
      * @returns {Object} The active comparison options.
      */
@@ -308,14 +398,13 @@ const initTextCompare = () => {
     });
 
     /**
-     * Writes the rendered diff into the output panes, or a no-changes message when sequences are identical.
-     * @param {Array<Object>} operations - The diff operations.
-     * @param {Object} result - The render result containing html1 and html2.
+     * Writes the rendered diff into the output panes, or a no-changes message when texts are equal.
+     * @param {Object} result - The render result with html1, html2 and hasChanges.
      * @returns {void}
      */
-    const renderOutputs = (operations, result) => {
-        if (operations.every(op => op.type === 'equal')) {
-            const msg = `<div class="diff-no-changes">${globalThis.toolsI18n?.textCompare?.noChanges || 'No differences found'}</div>`;
+    const renderOutputs = (result) => {
+        if (!result.hasChanges) {
+            const msg = `<div class="diff-no-changes">${i18n().noChanges || 'No differences found'}</div>`;
             text1Output.innerHTML = msg;
             text2Output.innerHTML = msg;
             return;
@@ -335,22 +424,20 @@ const initTextCompare = () => {
 
     /**
      * Writes the character, line and similarity statistics into their display elements.
-     * @param {Object} result - The render result with additions, deletions and modifications.
-     * @param {number} equalCount - The count of equal characters.
+     * @param {Object} result - The render result with additions, deletions, modifications and equal counts.
      * @param {Object} lineStats - The line-level diff statistics.
-     * @param {number} similarity - The similarity percentage.
      * @returns {void}
      */
-    const updateStats = (result, equalCount, lineStats, similarity) => {
+    const updateStats = (result, lineStats) => {
         const cells = [
             [additionsCount, result.additions],
             [deletionsCount, result.deletions],
             [modificationsCount, result.modifications],
-            [equalCharsCount, equalCount],
+            [equalCharsCount, result.equal],
             [lineAdditionsCount, lineStats.additions],
             [lineDeletionsCount, lineStats.deletions],
             [lineModificationsCount, lineStats.modifications],
-            [similarityPercentage, `${similarity}%`]
+            [similarityPercentage, `${result.similarity}%`]
         ];
         cells.forEach(([el, val]) => { if (el) el.textContent = val; });
     };
@@ -360,7 +447,7 @@ const initTextCompare = () => {
      * @returns {void}
      */
     const showEmptyMessage = () => {
-        const msg = globalThis.toolsI18n?.textCompare?.errorEmptyTexts || 'Please enter texts to compare';
+        const msg = i18n().errorEmptyTexts || 'Please enter texts to compare';
         clearPanes();
         compareStats.style.display = 'none';
         globalThis.ToolStatus.set(compareStatus, msg, 'error');
@@ -372,7 +459,7 @@ const initTextCompare = () => {
      * @returns {void}
      */
     const showErrorMessage = (error) => {
-        const msg = `${globalThis.toolsI18n?.textCompare?.error || 'Error'}: ${error.message}`;
+        const msg = `${i18n().error || 'Error'}: ${error.message}`;
         clearPanes();
         compareStats.style.display = 'none';
         globalThis.ToolStatus.set(compareStatus, msg, 'error');
@@ -389,23 +476,24 @@ const initTextCompare = () => {
             if (!text1 && !text2) { showEmptyMessage(); return; }
 
             const options = getCompareOptions();
-            const display1 = transformDisplay(text1, options);
-            const display2 = transformDisplay(text2, options);
-            const compare1 = transformCompare(display1, options);
-            const compare2 = transformCompare(display2, options);
-            const operations = computeDiff(compare1, compare2);
-            const result = renderDiff(operations, display1, display2);
+            const lines1 = transformLineSource(text1, options).split('\n');
+            const lines2 = transformLineSource(text2, options).split('\n');
+            const keys1 = lines1.map((l) => transformCompare(l, options));
+            const keys2 = lines2.map((l) => transformCompare(l, options));
+            const lineOps = computeDiff(keys1, keys2);
+            const result = renderLineDiff(lineOps, lines1, lines2, options);
 
-            renderOutputs(operations, result);
+            renderOutputs(result);
 
-            const equalCount = operations.filter((op) => op.type === 'equal').length;
-            const lineCompare1 = transformCompare(transformLineSource(text1, options), options);
-            const lineCompare2 = transformCompare(transformLineSource(text2, options), options);
-            const lineStats = computeLineDiff(lineCompare1, lineCompare2);
-            updateStats(result, equalCount, lineStats, calculateSimilarity(operations));
+            const lineStats = {
+                additions: lineOps.filter((o) => o.type === 'insert').length,
+                deletions: lineOps.filter((o) => o.type === 'delete').length,
+                modifications: lineOps.filter((o) => o.type === 'substitute').length
+            };
+            updateStats(result, lineStats);
 
             updateDonut({
-                equal: equalCount,
+                equal: result.equal,
                 added: result.additions,
                 deleted: result.deletions,
                 modified: result.modifications
@@ -414,8 +502,8 @@ const initTextCompare = () => {
             setMode('diff');
             compareStats.style.display = 'grid';
             const total = result.additions + result.deletions + result.modifications;
-            const doneLabel = globalThis.toolsI18n?.textCompare?.comparisonDone || 'Comparison complete';
-            const noChangesLabel = globalThis.toolsI18n?.textCompare?.noChanges || 'No differences found';
+            const doneLabel = i18n().comparisonDone || 'Comparison complete';
+            const noChangesLabel = i18n().noChanges || 'No differences found';
             globalThis.ToolStatus.set(compareStatus, total === 0 ? noChangesLabel : `${doneLabel}: ${total}`, 'success');
         } catch (error) {
             showErrorMessage(error);
