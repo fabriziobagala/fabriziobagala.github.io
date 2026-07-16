@@ -168,7 +168,7 @@
       <ol class="focus-numbered">
         {{- range $i, $it := .items -}}
           <li class="focus-numbered__item">
-            <span class="focus-numbered__num">{{ printf "%02d" (add $i 1) }}</span>
+            <span class="focus-numbered__number">{{ printf "%02d" (add $i 1) }}</span>
             <div class="focus-numbered__body">
               <h3 class="focus-numbered__title">{{ $it.title }}</h3>
               <p class="focus-numbered__desc">{{ $it.desc }}</p>

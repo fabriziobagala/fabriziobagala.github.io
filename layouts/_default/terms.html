@@ -12,7 +12,7 @@
     <ul class="tag-cloud">
       {{- range $terms.ByCount -}}
         <li>
-          <a class="tag-chip tag-chip--lg" href="{{ .Page.RelPermalink }}">
+          <a class="tag-chip tag-chip--large" href="{{ .Page.RelPermalink }}">
             {{- partial "icon.html" "tag" -}}
             <span>{{ partial "term-label.html" .Page.Title }}</span>
             <span class="tag-chip__count">{{ .Count }}</span>

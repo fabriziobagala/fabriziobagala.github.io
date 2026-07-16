@@ -1291,7 +1291,7 @@ html.tooltips-dismissed [data-tooltip]::after {
   background: var(--surface-hover);
 }
 
-.btn--lg {
+.btn--large {
   padding: 14px 22px;
   font-size: var(--fs-base);
 }
@@ -1310,7 +1310,7 @@ html.tooltips-dismissed [data-tooltip]::after {
   gap: 6px;
 }
 
-.post-count__num {
+.post-count__number {
   font-family: var(--font-sans);
   font-size: var(--fs-md);
   font-weight: 700;
@@ -2242,7 +2242,7 @@ html:has(dialog[open]) {
   border-bottom: 0;
 }
 
-.focus-numbered__num {
+.focus-numbered__number {
   font-family: var(--font-sans);
   font-size: var(--fs-2xl);
   font-weight: 400;
@@ -2300,7 +2300,7 @@ html:has(dialog[open]) {
     grid-column: 1 / -1;
   }
 
-  .focus-numbered__num {
+  .focus-numbered__number {
     font-size: var(--fs-xl);
   }
 }
@@ -2478,7 +2478,7 @@ html:has(dialog[open]) {
   opacity: 0.85;
 }
 
-.tag-chip--lg {
+.tag-chip--large {
   font-size: var(--fs-sm);
   padding: 6px 14px;
 }
@@ -3106,7 +3106,7 @@ html:has(dialog[open]) {
   line-height: 1.55;
 }
 
-.input--sm {
+.input--small {
   width: 90px;
 }
 
@@ -3392,7 +3392,7 @@ html:has(dialog[open]) {
   margin: 0;
 }
 
-.notfound__grad {
+.notfound__gradient {
   background: linear-gradient(135deg, var(--text-strong) 10%, var(--accent) 70%, var(--accent-strong));
   -webkit-background-clip: text;
   background-clip: text;
