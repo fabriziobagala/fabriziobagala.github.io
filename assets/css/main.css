@@ -343,6 +343,17 @@ pre {
   background: transparent;
 }
 
+.highlight__copy.is-copy-failed {
+  color: var(--danger);
+  border-color: currentColor;
+  background: transparent;
+}
+
+.tool-copy.is-copy-failed,
+.share-btn.is-copy-failed {
+  color: var(--danger);
+}
+
 .highlight__copy-icon {
   display: inline-flex;
 }

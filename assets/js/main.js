@@ -483,7 +483,8 @@ const BlogSearch = (() => {
 
     const state = { posts: null, pending: null };
     /**
-     * Loads the post index once, caching the result and in-flight promise.
+     * Loads the post index once, caching the result and in-flight promise; a
+     * failed fetch clears the pending promise so the next call retries.
      * @returns {Promise<Array<Object>>} A promise resolving to the post records.
      */
     const loadIndex = () => {
@@ -638,7 +639,7 @@ const CodeBlocks = (() => {
    */
   const labels = () => {
     const d = document.documentElement.dataset;
-    return { copy: d.i18nCopy || 'Copy', copied: d.i18nCopied || 'Copied' };
+    return { copy: d.i18nCopy || 'Copy', copied: d.i18nCopied || 'Copied', failed: d.i18nCopyFailed || 'Copy failed' };
   };
 
   /**
@@ -653,7 +654,7 @@ const CodeBlocks = (() => {
     block.dataset.enhanced = 'true';
 
     const lang = labelFor(code.dataset.lang || '');
-    const { copy, copied } = labels();
+    const { copy, copied, failed } = labels();
 
     const header = document.createElement('div');
     header.className = 'highlight__header';
@@ -675,10 +676,27 @@ const CodeBlocks = (() => {
      * @returns {void}
      */
     const reset = () => {
-      btn.classList.remove('is-copied');
+      btn.classList.remove('is-copied', 'is-copy-failed');
       btn.setAttribute('aria-label', copy);
       iconSpan.innerHTML = ICON_COPY;
       labelSpan.textContent = copy;
+    };
+
+    /**
+     * Shows a transient outcome state on the copy button.
+     * @param {string} className - The state class to apply.
+     * @param {string} label - The label and accessible name to show.
+     * @param {string} icon - The icon markup to show.
+     * @returns {void}
+     */
+    const showState = (className, label, icon) => {
+      btn.classList.remove('is-copied', 'is-copy-failed');
+      btn.classList.add(className);
+      btn.setAttribute('aria-label', label);
+      iconSpan.innerHTML = icon;
+      labelSpan.textContent = label;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(reset, 1800);
     };
 
     btn.addEventListener('click', async () => {
@@ -686,14 +704,10 @@ const CodeBlocks = (() => {
         await navigator.clipboard.writeText(code.textContent);
       } catch (err) {
         console.debug('CodeBlocks: copy failed', err);
+        showState('is-copy-failed', failed, ICON_COPY);
         return;
       }
-      btn.classList.add('is-copied');
-      btn.setAttribute('aria-label', copied);
-      iconSpan.innerHTML = ICON_CHECK;
-      labelSpan.textContent = copied;
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(reset, 1800);
+      showState('is-copied', copied, ICON_CHECK);
     });
   };
 
@@ -796,7 +810,7 @@ const ToolKit = (() => {
    */
   const copyLabels = () => {
     const d = document.documentElement.dataset;
-    return { copy: d.i18nCopy || 'Copy', copied: d.i18nCopied || 'Copied' };
+    return { copy: d.i18nCopy || 'Copy', copied: d.i18nCopied || 'Copied', failed: d.i18nCopyFailed || 'Copy failed' };
   };
 
   /**
@@ -807,7 +821,7 @@ const ToolKit = (() => {
   const wireCopy = (btn) => {
     if (btn.dataset.bound === '1') return;
     btn.dataset.bound = '1';
-    const { copy, copied } = copyLabels();
+    const { copy, copied, failed } = copyLabels();
     const iconSpan = btn.querySelector('.tool-copy__icon');
     if (iconSpan && !iconSpan.innerHTML.trim()) iconSpan.innerHTML = ICON_COPY;
     let timer = null;
@@ -817,10 +831,26 @@ const ToolKit = (() => {
      * @returns {void}
      */
     const reset = () => {
-      btn.classList.remove('is-copied');
+      btn.classList.remove('is-copied', 'is-copy-failed');
       btn.setAttribute('aria-label', copy);
       if (hasTooltip) btn.dataset.tooltip = copy;
       if (iconSpan) iconSpan.innerHTML = ICON_COPY;
+    };
+    /**
+     * Shows a transient outcome state on the copy button.
+     * @param {string} className - The state class to apply.
+     * @param {string} label - The label, tooltip and accessible name to show.
+     * @param {string} icon - The icon markup to show.
+     * @returns {void}
+     */
+    const showState = (className, label, icon) => {
+      btn.classList.remove('is-copied', 'is-copy-failed');
+      btn.classList.add(className);
+      btn.setAttribute('aria-label', label);
+      if (hasTooltip) btn.dataset.tooltip = label;
+      if (iconSpan) iconSpan.innerHTML = icon;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(reset, 1800);
     };
     btn.addEventListener('click', async () => {
       const target = document.getElementById(btn.dataset.copyTarget);
@@ -831,14 +861,10 @@ const ToolKit = (() => {
         await navigator.clipboard.writeText(text);
       } catch (err) {
         console.debug('ToolKit: copy failed', err);
+        showState('is-copy-failed', failed, ICON_COPY);
         return;
       }
-      btn.classList.add('is-copied');
-      btn.setAttribute('aria-label', copied);
-      if (hasTooltip) btn.dataset.tooltip = copied;
-      if (iconSpan) iconSpan.innerHTML = ICON_CHECK;
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(reset, 1800);
+      showState('is-copied', copied, ICON_CHECK);
     });
   };
 
@@ -1053,6 +1079,7 @@ const PostShare = (() => {
     const labelEl = btn.querySelector('.share-btn__label');
     const copyText = btn.dataset.labelCopy || 'Copy link';
     const copiedText = btn.dataset.labelCopied || 'Copied';
+    const failedText = btn.dataset.labelCopyFailed || 'Copy failed';
     let timer = null;
 
     /**
@@ -1060,7 +1087,7 @@ const PostShare = (() => {
      * @returns {void}
      */
     const reset = () => {
-      btn.classList.remove('is-copied');
+      btn.classList.remove('is-copied', 'is-copy-failed');
       setCopyState(btn, labelEl, copyText);
     };
 
@@ -1073,6 +1100,10 @@ const PostShare = (() => {
         await navigator.clipboard.writeText(url);
       } catch (err) {
         console.debug('PostShare: copy failed', err);
+        btn.classList.add('is-copy-failed');
+        setCopyState(btn, labelEl, failedText);
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(reset, 1800);
         return;
       }
       btn.classList.add('is-copied');
