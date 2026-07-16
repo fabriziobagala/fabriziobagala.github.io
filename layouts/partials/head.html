@@ -14,6 +14,9 @@
 {{- $canonical := .Permalink -}}
 {{- if or (and (eq .Kind "section") (eq .Section "blog")) (eq .Kind "term") -}}
   {{- $canonical = .Paginator.URL | absURL -}}
+  {{- if gt .Paginator.PageNumber 1 -}}
+    {{- $description = printf "%s Page %d." $description .Paginator.PageNumber -}}
+  {{- end -}}
 {{- end -}}
 
 {{- $themeRes := `(function(){try{var t=localStorage.getItem('fb-theme');var p=(t==='light'||t==='dark')?t:null;if(p)document.documentElement.dataset.theme=p;var eff=p||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var c=document.querySelector('meta[name=color-scheme]');if(c)c.content=p||'dark light';var m=document.querySelector('meta[name=theme-color]');if(m)m.content=(eff==='dark')?'#0a0e14':'#ffffff';}catch(err){console.debug('theme bootstrap skipped:',err);}})();` | resources.FromString "csp/theme.js" | resources.Minify -}}

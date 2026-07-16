@@ -7,4 +7,15 @@
 {{- else -}}
   {{- $title = .LinkTitle | default .Title -}}
 {{- end -}}
-{{- return (cond .IsHome site.Title (printf "%s - %s" $title site.Title)) -}}
+{{- $full := "" -}}
+{{- if .IsHome -}}
+  {{- $full = printf "%s - %s" site.Title (site.Params.jobTitle | default "Senior .NET Developer") -}}
+{{- else -}}
+  {{- $full = printf "%s - %s" $title site.Title -}}
+{{- end -}}
+{{- if or (and (eq .Kind "section") (eq .Section "blog")) (eq .Kind "term") -}}
+  {{- if gt .Paginator.PageNumber 1 -}}
+    {{- $full = printf "%s - Page %d" $full .Paginator.PageNumber -}}
+  {{- end -}}
+{{- end -}}
+{{- return $full -}}
