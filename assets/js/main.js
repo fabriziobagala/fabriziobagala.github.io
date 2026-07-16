@@ -983,6 +983,7 @@ const StackMore = (() => {
 
     dialog.addEventListener('close', () => {
       trigger.setAttribute('aria-expanded', 'false');
+      trigger.focus({ preventScroll: true });
     });
 
     dialog.querySelectorAll('[data-stack-more-close]').forEach((el) => {
@@ -1110,6 +1111,10 @@ const PostShare = (() => {
 
     trigger.addEventListener('click', open);
 
+    dialog.addEventListener('close', () => {
+      trigger.focus({ preventScroll: true });
+    });
+
     dialog.querySelectorAll('[data-share-mastodon-cancel]').forEach((el) => {
       el.addEventListener('click', close);
     });
@@ -1145,6 +1150,29 @@ const PostShare = (() => {
 })();
 
 /**
+ * Tracks whether the user is interacting via pointer or keyboard and mirrors
+ * it on the root element's data-input-modality attribute for CSS.
+ */
+const InputModality = (() => {
+  /**
+   * Wires the pointerdown and keydown listeners that stamp the modality.
+   * @returns {void}
+   */
+  const init = () => {
+    document.addEventListener('pointerdown', () => {
+      document.documentElement.dataset.inputModality = 'pointer';
+    }, true);
+    document.addEventListener('keydown', (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      document.documentElement.dataset.inputModality = 'keyboard';
+    }, true);
+  };
+
+  return { init };
+})();
+
+/**
+/**
  * Syncs the portfolio category filter to the URL hash.
  */
 const PortfolioFilter = (() => {
@@ -1175,6 +1203,7 @@ const PortfolioFilter = (() => {
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   MobileNav.init();
+  InputModality.init();
   PortfolioFilter.init();
   NavIndicator.init();
   ContactPanes.init();

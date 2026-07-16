@@ -185,10 +185,20 @@ button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
-[tabindex]:focus-visible {
+[tabindex]:not([tabindex="-1"]):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: var(--rad-sm);
+}
+
+/* Pointer-modality focus rings */
+:root[data-input-modality="pointer"] .stack-tile--more:focus-visible,
+:root[data-input-modality="pointer"] .share-btn--mastodon:focus-visible,
+:root[data-input-modality="pointer"] .stack-popover__close:focus-visible,
+:root[data-input-modality="pointer"] .stack-popover__tab:focus-visible,
+:root[data-input-modality="pointer"] .mastodon-dialog__close:focus-visible,
+:root[data-input-modality="pointer"] .mastodon-dialog__actions .btn:focus-visible {
+  outline: none;
 }
 
 button {
@@ -2030,9 +2040,7 @@ a.card:hover {
 }
 
 .stack-popover::backdrop {
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .stack-popover__panel {
@@ -3215,9 +3223,7 @@ a.card:hover {
 }
 
 .mastodon-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .mastodon-dialog__form {
