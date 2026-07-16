@@ -382,7 +382,7 @@ pre {
 }
 
 :root[data-theme="light"] .highlight__copy.is-copied {
-  color: #098658;
+  color: #0a7a50;
 }
 
 /* Code block, light theme (OS preference) */
@@ -405,7 +405,7 @@ pre {
   }
 
   :root:not([data-theme]) .highlight__copy.is-copied {
-    color: #098658;
+    color: #0a7a50;
   }
 }
 
