@@ -84,7 +84,7 @@ public class Square : IShape
 }
 ```
 
-Now nobody can call `square.Width = 5` and expect rectangle behavior, because that method does not exist. Both types honestly implement `Area`, and code written against `IShape` works with either. Notice the use of `init` instead of `set`: making the shapes immutable also sidesteps the entire mutable-setter trap.
+Now nobody can call `square.Width = 5` and expect rectangle behavior, because that member does not exist. Both types honestly implement `Area`, and code written against `IShape` works with either. Notice the use of `init` instead of `set`: making the shapes immutable also sidesteps the entire mutable-setter trap.
 
 ## A subtler, real-world violation
 
@@ -99,7 +99,9 @@ public abstract class Repository<T>
 
 public class ReadOnlyReportRepository : Repository<Report>
 {
-    public override Report GetById(int id) => throw new NotImplementedException();
+    private readonly ReportStore _store = new();
+
+    public override Report GetById(int id) => _store.Load(id);
 
     public override void Save(Report entity) =>
         throw new NotSupportedException("Reports are read-only.");
@@ -123,7 +125,9 @@ public interface IWriteRepository<T>
 
 public class ReportRepository : IReadRepository<Report>
 {
-    public Report GetById(int id) => throw new NotImplementedException();
+    private readonly ReportStore _store = new();
+
+    public Report GetById(int id) => _store.Load(id);
 }
 ```
 
@@ -137,7 +141,7 @@ LSP is often expressed as a set of contract rules a subtype must follow:
 - **Postconditions cannot be weakened**: a subtype must deliver at least what the base promised. If the base guarantees a non-null result, so must the subtype.
 - **Invariants must be preserved**: rules that always hold for the base must still hold for the subtype.
 - **No new exceptions**: a subtype should not throw exceptions the caller of the base type would not expect, like the `NotSupportedException` above.
-- **Signatures stay variance-safe**: an override may accept more general parameters and return more specific results, never the reverse. C# enforces most of this for you, so you rarely break it by accident.
+- **Signatures stay variance-safe**: a subtype may return more specific results, never demand more specific inputs. C# is stricter than the theory here: override parameters must match the base exactly, and only return types can narrow (covariant returns, since C# 9), so the compiler keeps you honest.
 - **The history constraint holds**: a subtype must not allow state changes the base type forbids. Deriving a mutable type from an immutable one is the classic breach, since callers of the base assume the object never changes after creation.
 
 If you keep these in mind, you will catch most violations before they reach production.
@@ -149,4 +153,4 @@ If you keep these in mind, you will catch most violations before they reach prod
 - Watch for overrides that throw `NotSupportedException` or that quietly change expected results.
 - Do not strengthen preconditions, weaken postconditions, or break invariants in subtypes.
 
-Next: the **Interface Segregation Principle**, which keeps your abstractions small enough that nobody is forced to implement methods they do not need.
+Next: the **[Interface Segregation Principle](/blog/interface-segregation-principle/)**, which keeps your abstractions small enough that nobody is forced to implement methods they do not need.

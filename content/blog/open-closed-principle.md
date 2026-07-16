@@ -43,7 +43,7 @@ public class ShippingCalculator
 }
 ```
 
-Every new shipping option, drone delivery, international freight, pickup point, forces you to crack open this class and add another `case`. The class is *not closed* for modification. Worse, all the unrelated shipping rules pile up in one method, and a typo in the express rule risks the standard rule.
+Every new shipping option (drone delivery, international freight, a pickup point) forces you to crack open this class and add another `case`. The class is *not closed* for modification. Worse, all the unrelated shipping rules pile up in one method, and a typo in the express rule risks the standard rule.
 
 ## The fix: program to an abstraction
 
@@ -137,4 +137,4 @@ The pragmatic rule is the **rule of three**. The first time you need a variation
 - A small registration point that changes is acceptable; scattered business rules are not.
 - Do not abstract speculatively; introduce the seam when a real second variation arrives.
 
-Next: the **Liskov Substitution Principle**, which makes sure your subclasses can actually stand in for their base types.
+Next: the **[Liskov Substitution Principle](/blog/liskov-substitution-principle/)**, which makes sure your subclasses can actually stand in for their base types.

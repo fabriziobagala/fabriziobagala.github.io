@@ -72,4 +72,4 @@ You do not need to memorize definitions. For each principle, ask yourself two qu
 
 If you can answer those, you understand SOLID better than most people who can recite the acronym.
 
-Next up: the **Single Responsibility Principle**, the most misunderstood letter of the five.
+Next: the **[Single Responsibility Principle](/blog/single-responsibility-principle/)**, the most misunderstood letter of the five.

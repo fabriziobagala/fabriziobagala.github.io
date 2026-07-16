@@ -133,17 +133,20 @@ public class FakeNotifier : INotificationSender
 }
 
 // The test runs with no database and no mail server.
-[Fact]
-public void PlaceOrder_SavesAndNotifies()
+public class OrderServiceTests
 {
-    var repository = new FakeRepository();
-    var notifier = new FakeNotifier();
-    var service = new OrderService(repository, notifier);
+    [Fact]
+    public void PlaceOrder_SavesAndNotifies()
+    {
+        var repository = new FakeRepository();
+        var notifier = new FakeNotifier();
+        var service = new OrderService(repository, notifier);
 
-    service.PlaceOrder(new Order { CustomerEmail = "a@b.com" });
+        service.PlaceOrder(new Order { CustomerEmail = "a@b.com" });
 
-    Assert.Single(repository.Saved);
-    Assert.Single(notifier.Messages);
+        Assert.Single(repository.Saved);
+        Assert.Single(notifier.Messages);
+    }
 }
 ```
 
@@ -151,7 +154,7 @@ No mocking framework required, no I/O, fast and deterministic. That is the pract
 
 ## The trap: abstracting everything
 
-DIP does not mean every class needs an interface. Introducing an abstraction for a type that has exactly one implementation and no plausible reason to vary, a pure data model, a stable internal helper, adds indirection without buying flexibility. Reserve abstractions for the seams where change or substitution is realistic: external systems, infrastructure, and policy boundaries. A codebase where every class hides behind an `IThing` is just as hard to read as one with no abstractions at all.
+DIP does not mean every class needs an interface. Introducing an abstraction for a type that has exactly one implementation and no plausible reason to vary (a pure data model, a stable internal helper) adds indirection without buying flexibility. Reserve abstractions for the seams where change or substitution is realistic: external systems, infrastructure, and policy boundaries. A codebase where every class hides behind an `IThing` is just as hard to read as one with no abstractions at all.
 
 ## How SOLID fits together
 

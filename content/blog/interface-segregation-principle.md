@@ -49,7 +49,7 @@ public class BasicPrinter : IMultiFunctionDevice
 }
 ```
 
-Three of the four methods are lies. `BasicPrinter` is forced to depend on, and fake, behavior it does not have. Any code holding an `IMultiFunctionDevice` might call `Fax` and crash at runtime. The interface promised more than this client could keep, which also violates Liskov.
+Three of the four methods are lies. `BasicPrinter` is forced to depend on, and fake, behavior it does not have. Any code holding an `IMultiFunctionDevice` might call `Fax` and crash at runtime. The interface promised more than this implementer could keep, which also violates Liskov.
 
 ## The fix: split by capability
 
@@ -114,9 +114,9 @@ The second version is honest about its needs. It can accept a `BasicPrinter`, an
 
 ## A practical heuristic
 
-You do not need to split every interface into single-method pieces. The right granularity is **per role**, per the way a group of methods is used together. Ask: do these methods always get implemented and consumed as a set?
+You do not need to split every interface into single-method pieces. The right granularity is **per role**, that is, by the way a group of methods is used together. Ask: do these methods always get implemented and consumed as a set?
 
-- A `Stream` with `Read` and `Write` is reasonable when most users do both, and .NET still splits the concerns through `CanRead`/`CanWrite` and dedicated reader/writer types when they do not.
+- A `Stream` with `Read` and `Write` is the BCL's deliberate trade-off, not a counterexample: plenty of implementations throw `NotSupportedException` for the parts they cannot honor (a read-only stream's `Write`, a `NetworkStream`'s `Seek`), which is exactly the fat-interface signal below, so .NET compensates with runtime capability flags (`CanRead`/`CanWrite`) and dedicated reader/writer types.
 - A service interface with twenty methods spanning user management, billing, and reporting almost certainly serves three different clients and should be three interfaces.
 
 The signal that an interface is too fat is concrete: implementers that throw "not supported," or consumers that use only one or two of its many methods.
@@ -152,4 +152,4 @@ The method states precisely what it needs, no more.
 - Split interfaces by role, where a role is a cohesive set of methods used together.
 - The warning signs are `NotSupportedException` in implementations and consumers that touch only a fraction of an interface.
 
-Next, the final principle: **Dependency Inversion**, which flips your dependencies so high-level policy no longer hangs off low-level details.
+Next: the final principle, the **[Dependency Inversion Principle](/blog/dependency-inversion-principle/)**, which flips your dependencies so high-level policy no longer hangs off low-level details.

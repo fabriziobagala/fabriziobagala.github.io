@@ -87,10 +87,10 @@ SRP is easiest to see in service classes that quietly grow extra jobs. Here is a
 ```csharp
 public class SalesReportService
 {
-    public void GenerateAndEmail(DateOnly month, string recipient)
+    public void GenerateAndEmail(DateOnly monthStart, string recipient)
     {
         // 1. Fetch data
-        var sales = Database.Query("SELECT * FROM Sales WHERE Month = @month", month);
+        var sales = Database.Query("SELECT * FROM Sales WHERE MonthStart = @monthStart", monthStart);
 
         // 2. Format as CSV
         var csv = string.Join("\n", sales.Select(s => $"{s.Id},{s.Amount}"));
@@ -107,7 +107,7 @@ Three responsibilities, three reasons to change: the query, the format, and the 
 ```csharp
 public class SalesRepository
 {
-    public IReadOnlyList<Sale> GetForMonth(DateOnly month) => throw new NotImplementedException();
+    public IReadOnlyList<Sale> GetForMonth(DateOnly monthStart) => throw new NotImplementedException();
 }
 
 public class CsvSalesFormatter
@@ -139,16 +139,16 @@ public class SalesReportService
         _sender = sender;
     }
 
-    public void GenerateAndEmail(DateOnly month, string recipient)
+    public void GenerateAndEmail(DateOnly monthStart, string recipient)
     {
-        var sales = _repository.GetForMonth(month);
+        var sales = _repository.GetForMonth(monthStart);
         var csv = _formatter.Format(sales);
         _sender.Send(recipient, "Monthly sales", csv);
     }
 }
 ```
 
-Want PDF instead of CSV? Write a new formatter. Want to push to a file share instead of email? Swap the sender. Each change touches exactly one class.
+Want PDF instead of CSV? Write a new formatter and swap it in the wiring. Want to push to a file share instead of email? Same move on the sender. The service still depends on concrete classes here, so the constructor wiring changes with the swap; later in the series, the Open/Closed and Dependency Inversion principles turn that swap into pure configuration behind interfaces. What SRP has already bought you is that the query, the format, and the delivery each live in exactly one place.
 
 ## The benefits you actually get
 
@@ -158,9 +158,9 @@ Want PDF instead of CSV? Write a new formatter. Want to push to a file share ins
 
 ## The trap: too much of a good thing
 
-SRP is the easiest principle to over-apply. Taken to the extreme, every method becomes its own class, and you end up navigating fifteen files to follow one logical operation. That is not clean, it is fragmented.
+SRP is the easiest principle to over-apply. Taken to the extreme, every method becomes its own class, and you end up navigating fifteen files to follow one logical operation. That is not clean; it is fragmented.
 
-Keep responsibilities together when they genuinely change together. A `Money` value object that knows how to add, subtract, and format itself is not violating SRP, because all of that is the single responsibility of "being money." The test is not "how many methods does it have," it is "how many *unrelated actors* could ask for a change."
+Keep responsibilities together when they genuinely change together. A `Money` value object that knows how to add, subtract, and format itself is not violating SRP, because all of that is the single responsibility of "being money." The test is not "how many methods does it have"; it is "how many *unrelated actors* could ask for a change."
 
 ## Takeaways
 
@@ -169,4 +169,4 @@ Keep responsibilities together when they genuinely change together. A `Money` va
 - Split by actor, not by counting methods.
 - Do not shatter cohesive logic just to chase the principle.
 
-Next: the **Open/Closed Principle**, which lets you add behavior without editing code that already works.
+Next: the **[Open/Closed Principle](/blog/open-closed-principle/)**, which lets you add behavior without editing code that already works.
