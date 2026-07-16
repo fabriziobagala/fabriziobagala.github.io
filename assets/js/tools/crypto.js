@@ -352,6 +352,7 @@ const wireCrypto = (scope) => {
 
     document.getElementById('crypto-clear-btn')?.addEventListener('click', () => {
         if (timer) clearTimeout(timer);
+        reqId++;
         input.value = '';
         if (hmacEl) hmacEl.value = '';
         output.value = '';

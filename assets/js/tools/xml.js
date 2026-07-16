@@ -25,6 +25,11 @@ const cleanParseError = (raw) => raw
     .join('\n')
     .trim();
 
+const PARSER_ERROR_NAMESPACE = (() => {
+    const probe = new DOMParser().parseFromString('<', 'application/xml');
+    return probe.getElementsByTagName('parsererror')[0]?.namespaceURI || null;
+})();
+
 /**
  * Parses an XML string and reports either the document or a cleaned error.
  * @param {string} input - The XML source to parse.
@@ -32,7 +37,9 @@ const cleanParseError = (raw) => raw
  */
 const parseXml = (input) => {
     const doc = new DOMParser().parseFromString(input, 'application/xml');
-    const err = doc.querySelector('parsererror');
+    const err = PARSER_ERROR_NAMESPACE
+        ? doc.getElementsByTagNameNS(PARSER_ERROR_NAMESPACE, 'parsererror')[0]
+        : doc.getElementsByTagName('parsererror')[0];
     if (err) {
         const raw = err.querySelector('div')?.textContent || err.textContent || '';
         return { doc: null, error: cleanParseError(raw) || i18n().errorInvalid || 'Invalid' };
@@ -132,6 +139,7 @@ const prettyPrint = (doc, xmlString, pad, { sortAttrs, keepComments }) => {
                 return out;
             }
             case Node.ELEMENT_NODE: return serializeElement(node, depth);
+            case Node.DOCUMENT_TYPE_NODE: return `${prefix}${new XMLSerializer().serializeToString(node)}\n`;
             case Node.TEXT_NODE: { const t = node.nodeValue.trim(); return t ? `${prefix}${escapeXmlText(t)}\n` : ''; }
             case Node.COMMENT_NODE: return keepComments ? `${prefix}<!--${node.nodeValue}-->\n` : '';
             case Node.CDATA_SECTION_NODE: return `${prefix}<![CDATA[${node.nodeValue}]]>\n`;
@@ -174,6 +182,7 @@ const minify = (doc, xmlString, { sortAttrs, keepComments }) => {
                     ? `<${node.nodeName}${attrs}>${inner}</${node.nodeName}>`
                     : `<${node.nodeName}${attrs}/>`;
             }
+            case Node.DOCUMENT_TYPE_NODE: return new XMLSerializer().serializeToString(node);
             case Node.TEXT_NODE: { const t = node.nodeValue; return t.trim() ? escapeXmlText(t.replace(/\s+/g, ' ')) : ''; }
             case Node.COMMENT_NODE: return keepComments ? `<!--${node.nodeValue}-->` : '';
             case Node.CDATA_SECTION_NODE: return `<![CDATA[${node.nodeValue}]]>`;

@@ -57,13 +57,13 @@ const encode = (text, urlSafe) => {
 };
 
 /**
- * Decodes a Base64 string to UTF-8 text.
+ * Decodes a Base64 string to UTF-8 text, accepting line-wrapped input.
  * @param {string} b64 - The Base64 string to decode (standard or URL-safe).
  * @returns {string} The decoded UTF-8 text.
  * @throws {Error} When the input is not valid Base64 or not valid UTF-8.
  */
 const decode = (b64) => {
-    const normalised = fromUrlSafe(b64.trim());
+    const normalised = fromUrlSafe(b64.replace(/\s+/g, ''));
     if (!/^[A-Za-z0-9+/]*={0,2}$/.test(normalised)) {
         throw new Error('Invalid Base64');
     }
