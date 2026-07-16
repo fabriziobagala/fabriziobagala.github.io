@@ -22,6 +22,7 @@
     </header>
 
     <section class="tool" data-tool-scope="{{ $tool }}">
+      <noscript><p class="tool-noscript">{{ i18n "tools_noscript" }}</p></noscript>
       {{- $toolPartial := printf "tools/%s.html" $tool -}}
       {{- if templates.Exists (printf "partials/%s" $toolPartial) -}}
         {{- partial $toolPartial . -}}

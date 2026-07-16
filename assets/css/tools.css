@@ -750,6 +750,17 @@
   background: var(--danger);
 }
 
+.tool-noscript {
+  margin: 0 0 var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid color-mix(in oklab, var(--danger) 50%, var(--border));
+  border-radius: var(--rad-md);
+  background: color-mix(in oklab, var(--danger) 9%, var(--surface));
+  color: var(--danger);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+}
+
 .compare-pane {
   min-width: 0;
 }
