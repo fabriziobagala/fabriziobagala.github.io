@@ -3420,3 +3420,54 @@ html:has(dialog[open]) {
     scroll-behavior: auto !important;
   }
 }
+
+/* Print */
+@media print {
+  :root,
+  :root[data-theme] {
+    color-scheme: light;
+    --bg: #ffffff;
+    --bg-elev: #f7f9fc;
+    --bg-elev-2: #eff3f9;
+    --surface: #ffffff;
+    --surface-hover: #f3f6fa;
+    --border: #d8deea;
+    --border-strong: #b9c2d2;
+    --text: #1a232f;
+    --text-strong: #050a12;
+    --text-muted: #4a5363;
+    --text-dim: #5a6477;
+    --accent: #03598a;
+    --accent-strong: #013a5c;
+    --accent-soft: rgba(3, 89, 138, 0.12);
+    --accent-on-soft: #03476e;
+    --success: #15803d;
+    --danger: #b91c4a;
+    --warning: #92500a;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+  }
+
+  .skip-link,
+  .site-header,
+  .theme-toggle,
+  .highlight__copy,
+  .post-share,
+  .pagination,
+  .series-nav,
+  .blog-controls,
+  .feed-btn {
+    display: none;
+  }
+
+  .highlight {
+    border-color: #e1e4e8;
+  }
+
+  .highlight__header {
+    background: #f3f3f3;
+    border-bottom-color: #e1e4e8;
+    color: #424242;
+  }
+}

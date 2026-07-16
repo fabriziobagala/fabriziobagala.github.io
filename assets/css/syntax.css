@@ -255,3 +255,89 @@
 /* GenericTraceback */ html[data-theme="light"] .chroma .gt { color:#cd3131 }
 /* GenericUnderline */ html[data-theme="light"] .chroma .gl { text-decoration:underline }
 /* TextWhitespace */ html[data-theme="light"] .chroma .w { color:#d3d3d3 }
+
+/* Print - force light syntax palette regardless of pinned theme */
+@media print {
+  /* Background */ html[data-theme] .bg, html:not([data-theme]) .bg { color:#000000;background-color:#ffffff; }
+  /* PreWrapper */ html[data-theme] .chroma, html:not([data-theme]) .chroma { color:#000000;background-color:#ffffff;-webkit-text-size-adjust:none; }
+  /* Error */ html[data-theme] .chroma .err, html:not([data-theme]) .chroma .err { color:#cd3131 }
+  /* LineLink */ html[data-theme] .chroma .lnlinks, html:not([data-theme]) .chroma .lnlinks { outline:none;text-decoration:none;color:inherit }
+  /* LineTableTD */ html[data-theme] .chroma .lntd, html:not([data-theme]) .chroma .lntd { vertical-align:top;padding:0;margin:0;border:0; }
+  /* LineTable */ html[data-theme] .chroma .lntable, html:not([data-theme]) .chroma .lntable { border-spacing:0;padding:0;margin:0;border:0; }
+  /* LineHighlight */ html[data-theme] .chroma .hl, html:not([data-theme]) .chroma .hl { background-color:#add6ff }
+  /* LineNumbersTable */ html[data-theme] .chroma .lnt, html:not([data-theme]) .chroma .lnt { white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#237893 }
+  /* LineNumbers */ html[data-theme] .chroma .ln, html:not([data-theme]) .chroma .ln { white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#237893 }
+  /* Line */ html[data-theme] .chroma .line, html:not([data-theme]) .chroma .line { display:flex; }
+  /* Keyword */ html[data-theme] .chroma .k, html:not([data-theme]) .chroma .k { color:#0000ff }
+  /* KeywordConstant */ html[data-theme] .chroma .kc, html:not([data-theme]) .chroma .kc { color:#0000ff }
+  /* KeywordDeclaration */ html[data-theme] .chroma .kd, html:not([data-theme]) .chroma .kd { color:#0000ff }
+  /* KeywordNamespace */ html[data-theme] .chroma .kn, html:not([data-theme]) .chroma .kn { color:#af00db }
+  /* KeywordPseudo */ html[data-theme] .chroma .kp, html:not([data-theme]) .chroma .kp { color:#0000ff }
+  /* KeywordReserved */ html[data-theme] .chroma .kr, html:not([data-theme]) .chroma .kr { color:#af00db }
+  /* KeywordType */ html[data-theme] .chroma .kt, html:not([data-theme]) .chroma .kt { color:#267f99 }
+  /* Name */ html[data-theme] .chroma .n, html:not([data-theme]) .chroma .n { color:#1f377f }
+  /* NameAttribute */ html[data-theme] .chroma .na, html:not([data-theme]) .chroma .na { color:#cd3131 }
+  /* NameClass */ html[data-theme] .chroma .nc, html:not([data-theme]) .chroma .nc { color:#267f99 }
+  /* NameConstant */ html[data-theme] .chroma .no, html:not([data-theme]) .chroma .no { color:#0070c1 }
+  /* NameDecorator */ html[data-theme] .chroma .nd, html:not([data-theme]) .chroma .nd { color:#795e26 }
+  /* NameEntity */ html[data-theme] .chroma .ni, html:not([data-theme]) .chroma .ni { color:#811f3f }
+  /* NameException */ html[data-theme] .chroma .ne, html:not([data-theme]) .chroma .ne { color:#267f99 }
+  /* NameLabel */ html[data-theme] .chroma .nl, html:not([data-theme]) .chroma .nl { color:#000000 }
+  /* NameNamespace */ html[data-theme] .chroma .nn, html:not([data-theme]) .chroma .nn { color:#000000 }
+  /* NameOther */ html[data-theme] .chroma .nx, html:not([data-theme]) .chroma .nx { color:#000000 }
+  /* NameTag */ html[data-theme] .chroma .nt, html:not([data-theme]) .chroma .nt { color:#800000 }
+  /* NameBuiltin */ html[data-theme] .chroma .nb, html:not([data-theme]) .chroma .nb { color:#267f99 }
+  /* NameBuiltinPseudo */ html[data-theme] .chroma .bp, html:not([data-theme]) .chroma .bp { color:#0000ff }
+  /* NameVariable */ html[data-theme] .chroma .nv, html:not([data-theme]) .chroma .nv { color:#1f377f }
+  /* NameVariableClass */ html[data-theme] .chroma .vc, html:not([data-theme]) .chroma .vc { color:#1f377f }
+  /* NameVariableGlobal */ html[data-theme] .chroma .vg, html:not([data-theme]) .chroma .vg { color:#1f377f }
+  /* NameVariableInstance */ html[data-theme] .chroma .vi, html:not([data-theme]) .chroma .vi { color:#1f377f }
+  /* NameVariableMagic */ html[data-theme] .chroma .vm, html:not([data-theme]) .chroma .vm { color:#1f377f }
+  /* NameFunction */ html[data-theme] .chroma .nf, html:not([data-theme]) .chroma .nf { color:#795e26 }
+  /* NameFunctionMagic */ html[data-theme] .chroma .fm, html:not([data-theme]) .chroma .fm { color:#795e26 }
+  /* Literal */ html[data-theme] .chroma .l, html:not([data-theme]) .chroma .l { color:#a31515 }
+  /* LiteralDate */ html[data-theme] .chroma .ld, html:not([data-theme]) .chroma .ld { color:#a31515 }
+  /* LiteralString */ html[data-theme] .chroma .s, html:not([data-theme]) .chroma .s { color:#a31515 }
+  /* LiteralStringAffix */ html[data-theme] .chroma .sa, html:not([data-theme]) .chroma .sa { color:#a31515 }
+  /* LiteralStringBacktick */ html[data-theme] .chroma .sb, html:not([data-theme]) .chroma .sb { color:#a31515 }
+  /* LiteralStringChar */ html[data-theme] .chroma .sc, html:not([data-theme]) .chroma .sc { color:#a31515 }
+  /* LiteralStringDelimiter */ html[data-theme] .chroma .dl, html:not([data-theme]) .chroma .dl { color:#a31515 }
+  /* LiteralStringDoc */ html[data-theme] .chroma .sd, html:not([data-theme]) .chroma .sd { color:#a31515 }
+  /* LiteralStringDouble */ html[data-theme] .chroma .s2, html:not([data-theme]) .chroma .s2 { color:#a31515 }
+  /* LiteralStringEscape */ html[data-theme] .chroma .se, html:not([data-theme]) .chroma .se { color:#ee0000 }
+  /* LiteralStringHeredoc */ html[data-theme] .chroma .sh, html:not([data-theme]) .chroma .sh { color:#a31515 }
+  /* LiteralStringInterpol */ html[data-theme] .chroma .si, html:not([data-theme]) .chroma .si { color:#a31515 }
+  /* LiteralStringOther */ html[data-theme] .chroma .sx, html:not([data-theme]) .chroma .sx { color:#a31515 }
+  /* LiteralStringRegex */ html[data-theme] .chroma .sr, html:not([data-theme]) .chroma .sr { color:#811f3f }
+  /* LiteralStringSingle */ html[data-theme] .chroma .s1, html:not([data-theme]) .chroma .s1 { color:#a31515 }
+  /* LiteralStringSymbol */ html[data-theme] .chroma .ss, html:not([data-theme]) .chroma .ss { color:#a31515 }
+  /* LiteralNumber */ html[data-theme] .chroma .m, html:not([data-theme]) .chroma .m { color:#098658 }
+  /* LiteralNumberBin */ html[data-theme] .chroma .mb, html:not([data-theme]) .chroma .mb { color:#098658 }
+  /* LiteralNumberFloat */ html[data-theme] .chroma .mf, html:not([data-theme]) .chroma .mf { color:#098658 }
+  /* LiteralNumberHex */ html[data-theme] .chroma .mh, html:not([data-theme]) .chroma .mh { color:#098658 }
+  /* LiteralNumberInteger */ html[data-theme] .chroma .mi, html:not([data-theme]) .chroma .mi { color:#098658 }
+  /* LiteralNumberIntegerLong */ html[data-theme] .chroma .il, html:not([data-theme]) .chroma .il { color:#098658 }
+  /* LiteralNumberOct */ html[data-theme] .chroma .mo, html:not([data-theme]) .chroma .mo { color:#098658 }
+  /* Operator */ html[data-theme] .chroma .o, html:not([data-theme]) .chroma .o { color:#000000 }
+  /* OperatorWord */ html[data-theme] .chroma .ow, html:not([data-theme]) .chroma .ow { color:#af00db }
+  /* Punctuation */ html[data-theme] .chroma .p, html:not([data-theme]) .chroma .p { color:#000000 }
+  /* Comment */ html[data-theme] .chroma .c, html:not([data-theme]) .chroma .c { color:#008000 }
+  /* CommentHashbang */ html[data-theme] .chroma .ch, html:not([data-theme]) .chroma .ch { color:#008000 }
+  /* CommentMultiline */ html[data-theme] .chroma .cm, html:not([data-theme]) .chroma .cm { color:#008000 }
+  /* CommentSingle */ html[data-theme] .chroma .c1, html:not([data-theme]) .chroma .c1 { color:#008000 }
+  /* CommentSpecial */ html[data-theme] .chroma .cs, html:not([data-theme]) .chroma .cs { color:#008000 }
+  /* CommentPreproc */ html[data-theme] .chroma .cp, html:not([data-theme]) .chroma .cp { color:#6e6e6e }
+  /* CommentPreprocFile */ html[data-theme] .chroma .cpf, html:not([data-theme]) .chroma .cpf { color:#6e6e6e }
+  /* GenericDeleted */ html[data-theme] .chroma .gd, html:not([data-theme]) .chroma .gd { color:#a31515;background-color:#ffeef0 }
+  /* GenericEmph */ html[data-theme] .chroma .ge, html:not([data-theme]) .chroma .ge { font-style:italic }
+  /* GenericError */ html[data-theme] .chroma .gr, html:not([data-theme]) .chroma .gr { color:#cd3131 }
+  /* GenericHeading */ html[data-theme] .chroma .gh, html:not([data-theme]) .chroma .gh { color:#0000ff;font-weight:bold }
+  /* GenericInserted */ html[data-theme] .chroma .gi, html:not([data-theme]) .chroma .gi { color:#006400;background-color:#e6ffec }
+  /* GenericOutput */ html[data-theme] .chroma .go, html:not([data-theme]) .chroma .go { color:#000000 }
+  /* GenericPrompt */ html[data-theme] .chroma .gp, html:not([data-theme]) .chroma .gp { color:#6e6e6e }
+  /* GenericStrong */ html[data-theme] .chroma .gs, html:not([data-theme]) .chroma .gs { font-weight:bold }
+  /* GenericSubheading */ html[data-theme] .chroma .gu, html:not([data-theme]) .chroma .gu { color:#0000ff }
+  /* GenericTraceback */ html[data-theme] .chroma .gt, html:not([data-theme]) .chroma .gt { color:#cd3131 }
+  /* GenericUnderline */ html[data-theme] .chroma .gl, html:not([data-theme]) .chroma .gl { text-decoration:underline }
+  /* TextWhitespace */ html[data-theme] .chroma .w, html:not([data-theme]) .chroma .w { color:#d3d3d3 }
+}
