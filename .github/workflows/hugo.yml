@@ -26,13 +26,13 @@ jobs:
       contents: read
       pages: read
     env:
-      HUGO_VERSION: 0.163.3
+      HUGO_VERSION: 0.164.0
       HUGO_ENVIRONMENT: production
       TZ: Europe/Rome
     steps:
       - name: Install Hugo CLI
         env:
-          HUGO_DEB_SHA256: 6e972f1e270ec202f35a717dbcf1c59b9fe24ac8967e391f3580f170a276ade7
+          HUGO_DEB_SHA256: 8325f3653032d0fc536503691f4833dc4eb6c6be02ee62466758f3f37a7f2fcd
         run: |
           set -euo pipefail
           deb="$RUNNER_TEMP/hugo.deb"
