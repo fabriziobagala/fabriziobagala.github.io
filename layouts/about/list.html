@@ -35,7 +35,6 @@
       {{- $years := sub now.Year $startYear -}}
       {{- $yearsLabel := cond (ge $years 11) "10+" (printf "%d" $years) -}}
       {{- $articles := len (where site.RegularPages "Section" "blog") -}}
-      {{- $tools := len (where site.RegularPages "Section" "tools") -}}
       <dl class="about-stats">
         <div class="about-stats__item">
           <dt class="about-stats__label">{{ i18n "about_stat_years" }}</dt>
@@ -44,10 +43,6 @@
         <div class="about-stats__item">
           <dt class="about-stats__label">{{ i18n "about_stat_articles" }}</dt>
           <dd class="about-stats__value">{{ $articles }}</dd>
-        </div>
-        <div class="about-stats__item">
-          <dt class="about-stats__label">{{ i18n "about_stat_tools" }}</dt>
-          <dd class="about-stats__value">{{ $tools }}</dd>
         </div>
       </dl>
     </div>

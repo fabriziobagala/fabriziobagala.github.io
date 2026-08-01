@@ -20,21 +20,6 @@
   {{- $main := resources.Get "js/main.js" | resources.Minify | resources.Fingerprint -}}
   <script src="{{ $main.RelPermalink }}" integrity="{{ $main.Data.Integrity }}" defer></script>
 
-  {{- with .Params.tool -}}
-
-    {{- if eq . "json" -}}
-      {{- with resources.Get "vendor/js-yaml.min.js" -}}
-        {{- $yaml := . | resources.Fingerprint -}}
-        <script src="{{ $yaml.RelPermalink }}" integrity="{{ $yaml.Data.Integrity }}" defer></script>
-      {{- end -}}
-    {{- end -}}
-    {{- $script := resources.Get (printf "js/tools/%s.js" .) -}}
-    {{- if $script -}}
-      {{- $script = $script | resources.Minify | resources.Fingerprint -}}
-      <script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>
-    {{- end -}}
-  {{- end -}}
-
   {{- if .Params.math -}}
     <script defer src="{{ "/katex/katex.min.js" | relURL }}" integrity="sha384-AtrdNsnxl/75rvBneBVH7DtOvCxSVahR2zWqle1coBKd8DEmLoviqNeJSx64gNAs" crossorigin="anonymous"></script>
     <script defer src="{{ "/katex/auto-render.min.js" | relURL }}" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>

@@ -86,12 +86,6 @@ summaryLength = 30
   weight = 30
 
 [[menu.main]]
-  identifier = "tools"
-  name = "Tools"
-  url = "/tools/"
-  weight = 48
-
-[[menu.main]]
   identifier = "blog"
   name = "Blog"
   url = "/blog/"

@@ -22,10 +22,7 @@
 {{- $themeRes := `(function(){try{var t=localStorage.getItem('fb-theme');var p=(t==='light'||t==='dark')?t:null;if(p)document.documentElement.dataset.theme=p;var eff=p||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');var c=document.querySelector('meta[name=color-scheme]');if(c)c.content=p||'dark light';var m=document.querySelector('meta[name=theme-color]');if(m)m.content=(eff==='dark')?'#0a0e14':'#ffffff';}catch(err){console.debug('theme bootstrap skipped:',err);}})();` | resources.FromString "csp/theme.js" | resources.Minify -}}
 {{- $themeJS := $themeRes.Content -}}
 {{- $themeHash := ($themeRes | resources.Fingerprint "sha256").Data.Integrity -}}
-{{- $toolsRes := `globalThis.toolsI18n=JSON.parse(document.getElementById('tools-i18n').textContent);` | resources.FromString "csp/tools-i18n.js" | resources.Minify -}}
-{{- $toolsJS := $toolsRes.Content -}}
-{{- $toolsHash := ($toolsRes | resources.Fingerprint "sha256").Data.Integrity -}}
-{{- $scriptSrc := printf "'self' '%s' '%s'" $themeHash $toolsHash -}}
+{{- $scriptSrc := printf "'self' '%s'" $themeHash -}}
 {{- if hugo.IsServer -}}{{- $scriptSrc = "'self' 'unsafe-inline'" -}}{{- end -}}
 {{- $styleSrc := "'self'" -}}
 {{- if hugo.IsServer -}}{{- $styleSrc = "'self' 'unsafe-inline'" -}}{{- end -}}
@@ -163,12 +160,9 @@
 
 {{- $main := resources.Get "css/main.css" -}}
 {{- $hasCode := and (eq .Section "blog") (eq .Kind "page") -}}
-{{- $isTool := .Params.tool -}}
 {{- $css := "" -}}
 {{- if $hasCode -}}
   {{- $css = slice $main (resources.Get "css/syntax.css") | resources.Concat "css/bundle-code.css" | resources.Minify | resources.Fingerprint -}}
-{{- else if $isTool -}}
-  {{- $css = slice $main (resources.Get "css/tools.css") | resources.Concat "css/bundle-tool.css" | resources.Minify | resources.Fingerprint -}}
 {{- else if .IsHome -}}
   {{- $css = slice $main (resources.Get "css/home.css") | resources.Concat "css/bundle-home.css" | resources.Minify | resources.Fingerprint -}}
 {{- else if and (eq .Section "portfolio") (eq .Kind "section") -}}
@@ -187,48 +181,6 @@
 
 {{- if .Params.math -}}
   <link rel="stylesheet" href="{{ "/katex/katex.min.css" | relURL }}" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
-{{- end -}}
-
-{{- if .Params.tool -}}
-  {{- $toolsI18n := dict
-    "json" (dict
-      "error" (i18n "err_generic")
-      "validOk" (i18n "ok_valid_json")
-      "errorInvalid" (i18n "err_invalid_json")
-      "errorTooDeep" (i18n "err_json_too_deep")
-      "errorCsvShape" (i18n "err_csv_shape")
-      "errorYamlMissing" (i18n "err_yaml_missing"))
-    "xml" (dict
-      "error" (i18n "err_generic")
-      "errorInvalid" (i18n "err_invalid_xml")
-      "validOk" (i18n "ok_valid_xml"))
-    "base64Converter" (dict
-      "error" (i18n "err_generic")
-      "validOk" (i18n "ok_valid_b64")
-      "errorInvalid" (i18n "err_invalid_b64_short")
-      "labelText" (i18n "tools_text")
-      "labelBase64" (i18n "tools_base64"))
-    "uuidV4" (dict
-      "error" (i18n "err_generic")
-      "validOk" (i18n "ok_valid_uuid")
-      "errorInvalid" (i18n "err_invalid_uuid_short")
-      "errorInvalidUuid" (i18n "err_invalid_uuid"))
-    "textCompare" (dict
-      "error" (i18n "err_generic")
-      "errorEmptyTexts" (i18n "err_empty_texts")
-      "errorTooLarge" (i18n "err_texts_too_large")
-      "noChanges" (i18n "ok_no_changes")
-      "comparisonDone" (i18n "ok_comparison_done")
-      "srAdded" (i18n "tools_diff_sr_added")
-      "srDeleted" (i18n "tools_diff_sr_deleted")
-      "srModified" (i18n "tools_diff_sr_modified"))
-    "crypto" (dict
-      "error" (i18n "err_generic")
-      "verifyMatch" (i18n "tools_crypto_verify_match")
-      "verifyMismatch" (i18n "tools_crypto_verify_mismatch"))
-  -}}
-<script type="application/json" id="tools-i18n">{{ $toolsI18n | jsonify }}</script>
-<script>{{ $toolsJS | safeJS }}</script>
 {{- end -}}
 
 <link rel="icon" type="image/png" sizes="96x96" href="{{ "/favicon-96x96.png" | relURL }}">

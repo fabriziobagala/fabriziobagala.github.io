@@ -4,7 +4,7 @@
 ![Hugo](https://img.shields.io/badge/Hugo-0.164.0%20extended-ff4088?style=for-the-badge&logo=hugo&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
-Source code for my personal website: a portfolio, a technical blog, and a small set of browser-based developer tools. Built with [Hugo](https://gohugo.io/) and hand-written layouts, no external theme, and deployed to GitHub Pages.
+Source code for my personal website: a portfolio and a technical blog. Built with [Hugo](https://gohugo.io/) and hand-written layouts, no external theme, and deployed to GitHub Pages.
 
 **Live site:** [fabriziobagala.com](https://fabriziobagala.com)
 
@@ -13,13 +13,6 @@ Source code for my personal website: a portfolio, a technical blog, and a small 
 - **Custom build, no theme.** Every layout, partial and shortcode is hand-written.
 - **Light and dark mode** with a theme toggle and system-preference detection.
 - **Responsive, mobile-first** design built on plain CSS.
-- **Developer tools** that run fully client-side, with no network calls:
-  - Base64 Converter - encode text to Base64 and decode it back
-  - Crypto - generate cryptographic hashes from any text
-  - JSON - format, validate and convert JSON
-  - Text Compare - compare two texts and highlight differences
-  - UUID v4 - generate a UUID v4 and convert it to Base64 and Hex
-  - XML - format, validate and convert XML
 - **Technical blog** with a SOLID principles series, tags, reading time, share links and an RSS feed.
 - **KaTeX** math rendering and **syntax highlighting** for code blocks.
 - **Contact form** powered by [Web3Forms](https://web3forms.com/), no backend required.
@@ -30,7 +23,7 @@ Source code for my personal website: a portfolio, a technical blog, and a small 
 
 - [Hugo Extended](https://gohugo.io/) v0.164.0 (static site generator)
 - Plain HTML, CSS and vanilla JavaScript, bundled and fingerprinted by Hugo Pipes
-- [KaTeX](https://katex.org/) for math, [js-yaml](https://github.com/nodeca/js-yaml) for the JSON tool's YAML view
+- [KaTeX](https://katex.org/) for math
 - Icons from [Font Awesome](https://fontawesome.com/) Free 7.3.1 (self-hosted SVGs)
 - GitHub Actions and GitHub Pages for build and deploy
 
@@ -40,7 +33,7 @@ Source code for my personal website: a portfolio, a technical blog, and a small 
 .
 ├── archetypes/          # Front-matter templates for new content
 ├── assets/              # Pipeline assets bundled by Hugo (CSS, JS, icons, images)
-├── content/             # Markdown content (about, blog, contact, portfolio, tools)
+├── content/             # Markdown content (about, blog, contact, portfolio)
 ├── i18n/                # UI strings (en.yaml)
 ├── layouts/             # Templates, partials and shortcodes
 ├── static/              # Files served verbatim (favicons, KaTeX, robots.txt, CNAME)
