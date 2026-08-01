@@ -95,7 +95,7 @@
   "name" site.Params.author
   "jobTitle" (site.Params.jobTitle | default "Senior .NET Developer")
   "url" site.BaseURL
-  "sameAs" (slice site.Params.linkedin site.Params.github site.Params.microsoftlearn)
+  "sameAs" (slice site.Params.linkedin site.Params.github)
 -}}
 {{- if site.Params.location -}}
   {{- $personLd = merge $personLd (dict "address" (dict "@type" "PostalAddress" "addressCountry" (site.Params.countryCode | default site.Params.location))) -}}
