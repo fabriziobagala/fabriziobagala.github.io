@@ -1,5 +1,5 @@
 baseURL = "https://fabriziobagala.com/"
-languageCode = "en-US"
+locale = "en-US"
 title = "Fabrizio Bagalà"
 enableRobotsTXT = false
 enableEmoji = false
