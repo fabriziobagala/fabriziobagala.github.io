@@ -1,0 +1,14 @@
+@media (max-width: 880px) {
+  .nav-toggle {
+    display: none;
+  }
+
+  .nav__list {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    box-shadow: none;
+    max-height: none;
+  }
+}

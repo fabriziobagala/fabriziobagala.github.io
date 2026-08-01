@@ -27,6 +27,8 @@
 {{- $toolsHash := ($toolsRes | resources.Fingerprint "sha256").Data.Integrity -}}
 {{- $scriptSrc := printf "'self' '%s' '%s'" $themeHash $toolsHash -}}
 {{- if hugo.IsServer -}}{{- $scriptSrc = "'self' 'unsafe-inline'" -}}{{- end -}}
+{{- $styleSrc := "'self'" -}}
+{{- if hugo.IsServer -}}{{- $styleSrc = "'self' 'unsafe-inline'" -}}{{- end -}}
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -34,7 +36,7 @@
 
 <meta name="theme-color" content="#0a0e14">
 
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src {{ $scriptSrc }}; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.web3forms.com; frame-src https://www.youtube-nocookie.com; form-action 'self' https://api.web3forms.com; manifest-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src {{ $scriptSrc }}; style-src {{ $styleSrc }}; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.web3forms.com; frame-src https://www.youtube-nocookie.com; form-action 'self' https://api.web3forms.com; manifest-src 'self'">
 
 <meta name="description" content="{{ $description }}">
 <meta name="author" content="{{ site.Params.author }}">
@@ -170,19 +172,18 @@
 {{- else if .IsHome -}}
   {{- $css = slice $main (resources.Get "css/home.css") | resources.Concat "css/bundle-home.css" | resources.Minify | resources.Fingerprint -}}
 {{- else if and (eq .Section "portfolio") (eq .Kind "section") -}}
-  {{- $css = slice $main (resources.Get "css/portfolio.css") | resources.Concat "css/bundle-portfolio.css" | resources.Minify | resources.Fingerprint -}}
-{{- else -}}
-  {{- $css = $main | resources.Minify | resources.Fingerprint -}}
-{{- end -}}
-<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
-{{- if and (eq .Section "portfolio") (eq .Kind "section") -}}
   {{- $filterCSS := "" -}}
   {{- range $c := .Params.categories -}}
     {{- $slug := $c.name | urlize -}}
     {{- $filterCSS = printf "%s#portfolio-showcase:has(#portfolio-filter-%s:checked) .portfolio-card:not([data-category=%q]),#portfolio-showcase:has(#portfolio-filter-%s:checked) .portfolio-coming:not([data-category=%q]){display:none}" $filterCSS $slug $c.name $slug $c.name -}}
   {{- end -}}
-  {{- with $filterCSS }}<style>{{ . | safeCSS }}</style>{{ end -}}
+  {{- $portfolioCSS := slice $main (resources.Get "css/portfolio.css") -}}
+  {{- with $filterCSS -}}{{- $portfolioCSS = $portfolioCSS | append (. | resources.FromString "css/portfolio-filter.css") -}}{{- end -}}
+  {{- $css = $portfolioCSS | resources.Concat "css/bundle-portfolio.css" | resources.Minify | resources.Fingerprint -}}
+{{- else -}}
+  {{- $css = $main | resources.Minify | resources.Fingerprint -}}
 {{- end -}}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 
 {{- if .Params.math -}}
   <link rel="stylesheet" href="{{ "/katex/katex.min.css" | relURL }}" integrity="sha384-vlBdW0r3AcZO/HboRPznQNowvexd3fY8qHOWkBi5q7KGgqJ+F48+DceybYmrVbmB" crossorigin="anonymous">
@@ -242,21 +243,5 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 {{- end }}
 <meta name="generator" content="Hugo">
-<noscript>
-  <style>
-    @media (max-width: 880px) {
-      .nav-toggle {
-        display: none;
-      }
-
-      .nav__list {
-        position: static;
-        opacity: 1;
-        visibility: visible;
-        translate: 0 0;
-        box-shadow: none;
-        max-height: none;
-      }
-    }
-  </style>
-</noscript>
+{{- $noscriptNav := resources.Get "css/noscript-nav.css" | resources.Minify | resources.Fingerprint -}}
+<noscript><link rel="stylesheet" href="{{ $noscriptNav.RelPermalink }}" integrity="{{ $noscriptNav.Data.Integrity }}"></noscript>

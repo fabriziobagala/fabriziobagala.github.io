@@ -834,6 +834,10 @@
   border-radius: var(--rad-md);
 }
 
+.diff-dashboard--collapsed {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .diff-dashboard {
     grid-template-columns: 1fr;
