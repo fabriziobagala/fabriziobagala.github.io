@@ -6,12 +6,13 @@
 {{- $latestPost := false -}}{{- if gt (len $sorted) 0 }}{{ $latestPost = index $sorted 0 }}{{ end -}}
 {{- $featured := false -}}
 {{- $pfProjects := slice -}}
-{{- $pfCategories := slice -}}
 {{- with site.GetPage "/portfolio" -}}
   {{- $featured = .Params.featured -}}
   {{- $pfProjects = .Params.projects | default slice -}}
-  {{- $pfCategories = .Params.categories | default slice -}}
 {{- end -}}
+{{- $featuredName := "" -}}
+{{- with $featured }}{{ $featuredName = .name }}{{ end -}}
+{{- if and (not $featuredName) (gt (len $pfProjects) 0) }}{{ $featuredName = (index $pfProjects 0).name }}{{ end -}}
 
 <div class="landing container">
 
@@ -26,39 +27,33 @@
       <p class="landing-eyebrow">{{ i18n "eyebrow_portfolio" }}</p>
       <h2 class="landing-section__title">{{ i18n "portfolio_title" }}</h2>
     </div>
-    {{- with $featured -}}
-
-      {{- $status := .status -}}
-      {{- range (where $pfProjects "name" .name) }}{{ $status = .status }}{{ end -}}
-      <article class="landing-feature">
-        <div class="landing-feature__head">
-          <p class="landing-feature__eyebrow">{{ i18n "eyebrow_portfolio" }} · {{ i18n "eyebrow_featured" }}</p>
-          {{- if $status }}<span class="portfolio-status portfolio-status--{{ $status }}"><span class="dot"></span>{{ i18n (printf "portfolio_status_%s" $status) }}</span>{{ end -}}
-        </div>
-        <h3 class="landing-feature__title">{{ .name }}</h3>
-        <p class="landing-feature__desc">{{ .description }}</p>
-        {{- with .stack -}}<ul class="landing-stack">{{- range . -}}<li>{{ . }}</li>{{- end -}}</ul>{{- end -}}
-        {{- if or .url .source -}}
-        <div class="landing-feature__foot">
-          {{- with .url -}}<a href="{{ . }}" target="_blank" rel="noopener">{{- partial "icon.html" "globe" -}}<span>{{ i18n "portfolio_view_project" }}</span></a>{{- end -}}
-          {{- with .source -}}<a href="{{ . }}" target="_blank" rel="noopener">{{- partial "icon.html" "brand-github" -}}<span>{{ i18n "portfolio_source" }}</span></a>{{- end -}}
-        </div>
+    {{- if gt (len $pfProjects) 0 -}}
+    {{- $total := len $pfProjects -}}
+    <div class="portfolio-carousel" role="region" aria-roledescription="carousel" aria-label="{{ i18n "portfolio_carousel_label" }}" data-portfolio-carousel>
+      <div class="portfolio-carousel__track" aria-live="polite">
+        {{- range $i, $project := $pfProjects -}}
+        <article class="portfolio-carousel__card{{ if eq $project.name $featuredName }} portfolio-carousel__card--initial{{ end }}" role="group" aria-roledescription="slide" aria-label="{{ add $i 1 }} / {{ $total }}">
+          <div class="portfolio-carousel__card-head">
+            <p class="portfolio-carousel__eyebrow">{{ $project.category }}</p>
+            {{- with $project.status }}<span class="portfolio-status portfolio-status--{{ . }}"><span class="dot"></span>{{ i18n (printf "portfolio_status_%s" .) }}</span>{{ end -}}
+          </div>
+          <h3 class="portfolio-carousel__title">{{ $project.name }}</h3>
+          <p class="portfolio-carousel__desc">{{ $project.description }}</p>
+          {{- with $project.stack -}}<ul class="landing-stack">{{- range . -}}<li>{{ . }}</li>{{- end -}}</ul>{{- end -}}
+          {{- if or $project.url $project.source -}}
+          <div class="portfolio-carousel__foot">
+            {{- with $project.url -}}<a href="{{ . }}" target="_blank" rel="noopener">{{- partial "icon.html" "globe" -}}<span>{{ i18n "portfolio_view_project" }}</span></a>{{- end -}}
+            {{- with $project.source -}}<a href="{{ . }}" target="_blank" rel="noopener">{{- partial "icon.html" "brand-github" -}}<span>{{ i18n "portfolio_source" }}</span></a>{{- end -}}
+          </div>
+          {{- end -}}
+        </article>
         {{- end -}}
-      </article>
-    {{- end -}}
-    <div class="portfolio-categories">
-      {{- range $pfCategories -}}
-        {{- $items := where $pfProjects "category" .name -}}
-        <a class="portfolio-category" href="{{ "/portfolio/" | relLangURL }}#filter-{{ .name | urlize }}">
-          <span class="portfolio-category__icon">{{- partial "icon.html" (.icon | default "briefcase") -}}</span>
-          <span class="portfolio-category__body">
-            <span class="portfolio-category__name">{{ .name }}</span>
-            {{- with .note }}<span class="portfolio-category__note">{{ . }}</span>{{ end -}}
-          </span>
-          <span class="portfolio-category__count">{{ len $items }}</span>
-        </a>
-      {{- end -}}
+      </div>
+      <button type="button" class="portfolio-carousel__arrow portfolio-carousel__arrow--previous" data-carousel-previous aria-label="{{ i18n "portfolio_carousel_previous" }}">{{- partial "icon.html" "arrow-left" -}}</button>
+      <button type="button" class="portfolio-carousel__arrow portfolio-carousel__arrow--next" data-carousel-next aria-label="{{ i18n "portfolio_carousel_next" }}">{{- partial "icon.html" "arrow-right" -}}</button>
     </div>
+    {{- end -}}
+    <p class="landing-more"><a class="landing-link" href="{{ "/portfolio/" | relLangURL }}"><span>{{ i18n "home_view_all" }}</span>{{- partial "icon.html" "arrow-right" -}}</a></p>
   </section>
 
   <section class="landing-section" id="blog">

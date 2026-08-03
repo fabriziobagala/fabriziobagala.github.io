@@ -1051,12 +1051,71 @@ const PortfolioFilter = (() => {
   return { init };
 })();
 
+/**
+ * Homepage portfolio carousel: centers one project card, shows its neighbours
+ * de-emphasised at the sides and wires looping arrow navigation.
+ */
+const PortfolioCarousel = (() => {
+  /**
+   * Finds the carousel, applies the initial card states and wires the arrows.
+   * @returns {void}
+   */
+  const init = () => {
+    const root = document.querySelector('[data-portfolio-carousel]');
+    if (!root) return;
+    const cards = Array.from(root.querySelectorAll('.portfolio-carousel__card'));
+    if (cards.length < 2) return;
+
+    let index = Math.max(cards.findIndex((card) => card.classList.contains('portfolio-carousel__card--initial')), 0);
+
+    /**
+     * Applies position classes and accessibility state for the active index.
+     * @returns {void}
+     */
+    const render = () => {
+      const total = cards.length;
+      const leftIndex = (index - 1 + total) % total;
+      const rightIndex = (index + 1) % total;
+      cards.forEach((card, i) => {
+        card.classList.remove('is-center', 'is-left', 'is-right');
+        let position = null;
+        if (i === index) position = 'is-center';
+        else if (i === rightIndex) position = 'is-right';
+        else if (i === leftIndex && total > 2) position = 'is-left';
+        if (position) card.classList.add(position);
+        const hidden = position !== 'is-center';
+        card.toggleAttribute('inert', hidden);
+        card.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+      });
+    };
+
+    /**
+     * Moves the active index by a signed offset, wrapping at both ends.
+     * @param {number} offset - The number of cards to move by.
+     * @returns {void}
+     */
+    const move = (offset) => {
+      index = (index + offset + cards.length) % cards.length;
+      render();
+    };
+
+    root.querySelector('[data-carousel-previous]')?.addEventListener('click', () => move(-1));
+    root.querySelector('[data-carousel-next]')?.addEventListener('click', () => move(1));
+
+    render();
+    root.classList.add('is-ready');
+  };
+
+  return { init };
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   MobileNav.init();
   InputModality.init();
   Tooltips.init();
   PortfolioFilter.init();
+  PortfolioCarousel.init();
   NavIndicator.init();
   ContactPanes.init();
   BlogSearch.init();

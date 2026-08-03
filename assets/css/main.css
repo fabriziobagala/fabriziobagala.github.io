@@ -1442,7 +1442,7 @@ a.card:hover {
   background: var(--success);
 }
 
-.landing-feature .portfolio-status--live .dot {
+.portfolio-carousel__card .portfolio-status--live .dot {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 22%, transparent);
 }
 
