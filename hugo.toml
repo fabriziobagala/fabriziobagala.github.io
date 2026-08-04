@@ -36,6 +36,8 @@ summaryLength = 30
     wrapStandAloneImageWithinParagraph = false
     [markup.goldmark.parser.attribute]
       block = true
+  [markup.goldmark.extensions.typographer]
+    disable = true
   [markup.goldmark.extensions.passthrough]
     enable = true
     [markup.goldmark.extensions.passthrough.delimiters]
