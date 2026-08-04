@@ -253,6 +253,7 @@ samp {
   border: 1px solid var(--border);
   border-radius: var(--rad-sm);
   padding: 1px 6px;
+  margin-inline: 0.15em;
 }
 
 pre {
@@ -1326,7 +1327,7 @@ html.tooltips-dismissed [data-tooltip]::after {
 .feed-btn:hover,
 .feed-btn:focus-visible {
   color: var(--accent-strong);
-  border-color: var(--accent);
+  border-color: var(--border-strong);
   background: var(--surface-hover);
 }
 
@@ -2467,7 +2468,7 @@ html:has(dialog[open]) {
 }
 
 .tag-chip:hover {
-  border-color: var(--accent);
+  border-color: var(--border-strong);
   color: var(--accent-strong);
   background: var(--accent-soft);
 }
