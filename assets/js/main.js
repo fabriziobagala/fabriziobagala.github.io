@@ -1099,11 +1099,45 @@ const PortfolioCarousel = (() => {
       render();
     };
 
+    const track = root.querySelector('.portfolio-carousel__track');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let timer = null;
+
+    /**
+     * Stops the automatic rotation and restores polite live announcements.
+     * @returns {void}
+     */
+    const pause = () => {
+      if (timer === null) return;
+      clearInterval(timer);
+      timer = null;
+      track?.setAttribute('aria-live', 'polite');
+    };
+
+    /**
+     * Starts the automatic rotation unless it is already running, the user
+     * prefers reduced motion or the page is not visible.
+     * @returns {void}
+     */
+    const play = () => {
+      if (timer !== null || reducedMotion.matches || document.hidden) return;
+      track?.setAttribute('aria-live', 'off');
+      timer = setInterval(() => move(1), 5000);
+    };
+
     root.querySelector('[data-carousel-previous]')?.addEventListener('click', () => move(-1));
     root.querySelector('[data-carousel-next]')?.addEventListener('click', () => move(1));
+    root.addEventListener('pointerenter', pause);
+    root.addEventListener('pointerleave', play);
+    root.addEventListener('focusin', pause);
+    root.addEventListener('focusout', (event) => {
+      if (!root.contains(event.relatedTarget)) play();
+    });
+    document.addEventListener('visibilitychange', () => (document.hidden ? pause() : play()));
 
     render();
     root.classList.add('is-ready');
+    play();
   };
 
   return { init };
