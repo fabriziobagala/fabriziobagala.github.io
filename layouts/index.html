@@ -35,7 +35,10 @@
         <article class="portfolio-carousel__card{{ if eq $project.name $featuredName }} portfolio-carousel__card--initial{{ end }}" role="group" aria-roledescription="slide" aria-label="{{ add $i 1 }} / {{ $total }}">
           <div class="portfolio-carousel__card-head">
             <p class="portfolio-carousel__eyebrow">{{ $project.category }}</p>
-            {{- with $project.status }}<span class="portfolio-status portfolio-status--{{ . }}"><span class="dot"></span>{{ i18n (printf "portfolio_status_%s" .) }}</span>{{ end -}}
+            <span class="portfolio-meta">
+              {{- with $project.role -}}<span class="portfolio-role">{{- partial "icon.html" "hand-holding-heart" -}}{{ . }}</span>{{- end -}}
+              {{- with $project.status }}<span class="portfolio-status portfolio-status--{{ . }}"><span class="dot"></span>{{ i18n (printf "portfolio_status_%s" .) }}</span>{{ end -}}
+            </span>
           </div>
           <h3 class="portfolio-carousel__title">{{ $project.name }}</h3>
           <p class="portfolio-carousel__desc">{{ $project.description }}</p>

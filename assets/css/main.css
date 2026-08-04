@@ -1414,6 +1414,32 @@ a.card:hover {
 }
 
 /* ---------- Portfolio ---------- */
+.portfolio-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.portfolio-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: var(--fs-xs);
+  color: var(--accent-on-soft);
+  white-space: nowrap;
+}
+
+.portfolio-role .icon {
+  width: 12px;
+  height: 12px;
+}
+
 .portfolio-status {
   display: inline-flex;
   align-items: center;
